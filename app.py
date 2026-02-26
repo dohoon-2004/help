@@ -65,31 +65,32 @@ st.markdown(
 }
 
 /* =========================================================
-   ✅ 1. 다크/라이트 모드 자동 대응 (CSS 변수 활용)
+   ✅ 1. 다크/라이트 모드 테마 변수 설정
    ========================================================= */
-:root{
+:root {
   --bg: #ffffff;
   --card: #f8fafc;
   --border: #e2e8f0;
   --text: #0f172a;
-  --muted: #475569;
+  --muted: #64748b;
   --shadow: 0 12px 34px rgba(0,0,0,0.12);
+  --song-primary: linear-gradient(135deg, #a855f7, #ec4899); /* 핑크/보라 */
+  --page-primary: linear-gradient(135deg, #0ea5e9, #06b6d4); /* 하늘/파랑 */
 }
 
-/* 시스템/브라우저 다크모드면 자동으로 다크 팔레트 적용 */
-@media (prefers-color-scheme: dark){
-  :root{
+@media (prefers-color-scheme: dark) {
+  :root {
     --bg: #0f1014;
     --card: rgba(255,255,255,0.06);
     --border: rgba(255,255,255,0.14);
-    --text: rgba(255,255,255,0.92);
+    --text: rgba(255,255,255,0.95);
     --muted: rgba(255,255,255,0.65);
     --shadow: 0 12px 34px rgba(0,0,0,0.25);
   }
 }
 
-/* 앱 전체 배경 */
-html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
+/* 배경 적용 */
+html, body, .stApp, [data-testid="stAppViewContainer"], .block-container {
   background: var(--bg) !important;
 }
 
@@ -100,8 +101,8 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
   max-width: 1200px; 
 }
 
-/* 텍스트 색상 변수 적용 */
-.headline{ 
+/* 텍스트 색상 적용 */
+.headline { 
   font-size: 2.2rem; 
   font-weight: 900;
   letter-spacing: -0.6px;
@@ -110,8 +111,22 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
   color: var(--text) !important; 
 }
 
+.song-title {
+  font-size: 1.65rem !important;
+  font-weight: 800 !important;
+  color: var(--text) !important;
+  margin: 0;
+}
+.song-artist {
+  font-size: 1.40rem !important;
+  font-weight: 600 !important;
+  margin-top: 0.2rem;
+  color: var(--muted) !important;
+  margin-bottom: 0;
+}
+
 /* 플레이어 */
-.yt-wrap{
+.yt-wrap {
   position: relative;
   padding-top: 56.25%;
   border-radius: 18px;
@@ -119,12 +134,11 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
   background: #000;
   box-shadow: var(--shadow) !important; 
 }
-.yt-wrap iframe{
+.yt-wrap iframe {
   position: absolute; inset: 0;
   width: 100%; height: 100%;
   border: 0;
 }
-
 .song-info-box {
   display: flex;
   flex-direction: column;
@@ -134,22 +148,9 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
   margin-top: 0.5rem;
   margin-bottom: 3.5rem;
 }
-.song-title{
-  font-size: 1.65rem !important;
-  font-weight: 800 !important;
-  color: var(--text) !important;
-  margin: 0;
-}
-.song-artist{
-  font-size: 1.40rem !important;
-  font-weight: 600 !important;
-  margin-top: 0.2rem;
-  color: var(--muted) !important;
-  margin-bottom: 0;
-}
 
 /* =========================================================
-   ✅ 2. 노래 목록 버튼 (카드 변수 적용)
+   ✅ 2. 노래 목록 버튼 디자인
    ========================================================= */
 div[data-testid="stButton"] > button {
   width: 100%;
@@ -158,7 +159,6 @@ div[data-testid="stButton"] > button {
   padding: 16px 20px !important;
   background-color: var(--card) !important;
   border: 1px solid var(--border) !important;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.03) !important;
   white-space: pre-wrap; 
   transition: all 0.2s; 
   font-size: 0.95rem;
@@ -174,38 +174,37 @@ div[data-testid="stButton"] > button p::first-line {
   color: var(--text) !important;
 }
 
-/* 선택된 노래 버튼 색상 (보라/핑크) */
+/* 🎵 노래 선택됨 -> 보라/핑크색 */
 div[data-testid="stButton"] > button[kind="primary"] {
-  background: linear-gradient(135deg, #a855f7, #ec4899) !important;
+  background: var(--song-primary) !important;
   border: none !important;
-  box-shadow: 0 6px 15px rgba(236, 72, 153, 0.3) !important;
 }
 div[data-testid="stButton"] > button[kind="primary"] * {
   color: #ffffff !important;
 }
 
 /* =========================================================
-   ✅ 3. 페이지네이션(숫자 버튼) 영역만 간격/원형 적용
+   ✅ 3. 숫자 버튼 영역 집중 타겟팅 (마커 사용 방식으로 복구)
    ========================================================= */
-.pager [data-testid="stHorizontalBlock"]{
+/* 페이지네이션 마커 바로 다음의 가로 블록을 타겟! */
+div[data-testid="stElementContainer"]:has(.pagination-marker) + div[data-testid="stHorizontalBlock"] {
   flex-direction: row !important;
   flex-wrap: nowrap !important;
-  gap: 4px !important;            /* 👈 4px로 예쁘게 딱 붙음 */
+  gap: 6px !important; /* 👈 좁은 간격 적용 */
   justify-content: center !important;
-  margin-top: 6px !important;
+  margin-top: 10px !important;
 }
 
-/* 컬럼 패딩/마진 제거 및 내용물 크기에 맞게 조절 */
-.pager [data-testid="column"]{
+/* 숫자 버튼 들어가는 컬럼 크기 고정 */
+div[data-testid="stElementContainer"]:has(.pagination-marker) + div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+  min-width: 42px !important;
+  max-width: 42px !important;
+  flex: 0 0 42px !important;
   padding: 0 !important;
-  margin: 0 !important;
-  min-width: unset !important;
-  width: auto !important;
-  flex: 0 0 auto !important;
 }
 
-/* 원형 버튼 크기 42px 지정 */
-.pager button{
+/* 숫자 버튼 자체를 완벽한 원형으로 */
+div[data-testid="stElementContainer"]:has(.pagination-marker) + div[data-testid="stHorizontalBlock"] button {
   width: 42px !important;
   height: 42px !important;
   min-height: 42px !important;
@@ -215,19 +214,19 @@ div[data-testid="stButton"] > button[kind="primary"] * {
   align-items: center !important;
   justify-content: center !important;
 }
-.pager button p {
+div[data-testid="stElementContainer"]:has(.pagination-marker) + div[data-testid="stHorizontalBlock"] button p {
   font-size: 1.15rem !important;
   font-weight: 800 !important;
   margin: 0 !important;
+  color: var(--text) !important;
 }
 
-/* 숫자 버튼 선택 시 색상 (파랑/하늘색) */
-.pager button[kind="primary"] {
-  background: linear-gradient(135deg, #0ea5e9, #06b6d4) !important;
+/* 🔢 숫자 버튼 선택됨 -> 파란/하늘색으로 노래버튼과 다르게 설정! */
+div[data-testid="stElementContainer"]:has(.pagination-marker) + div[data-testid="stHorizontalBlock"] button[kind="primary"] {
+  background: var(--page-primary) !important;
   border: none !important;
-  box-shadow: 0 6px 15px rgba(14, 165, 233, 0.3) !important;
 }
-.pager button[kind="primary"] p {
+div[data-testid="stElementContainer"]:has(.pagination-marker) + div[data-testid="stHorizontalBlock"] button[kind="primary"] p {
   color: #ffffff !important;
 }
 </style>
@@ -282,7 +281,7 @@ with list_col:
             st.session_state.scroll_to_top = True
             st.rerun()
 
-    # 페이지네이션 로직
+    # 페이지네이션 
     MAX_VISIBLE_BUTTONS = 5
     half_window = MAX_VISIBLE_BUTTONS // 2
     
@@ -295,8 +294,8 @@ with list_col:
         
     visible_pages = list(range(start_page, end_page))
 
-    # ✅ 래퍼 클래스로 감싸서 해당 영역만 콕 집어 CSS 적용
-    st.markdown("<div class='pager'>", unsafe_allow_html=True)
+    # ✅ 숫자 버튼 구역을 알려주는 '비밀 마커' 삽입!
+    st.markdown("<div class='pagination-marker'></div>", unsafe_allow_html=True)
     
     cols = st.columns(len(visible_pages))
     
@@ -308,5 +307,3 @@ with list_col:
                 st.session_state.headline = random.choice(HEADLINES)
                 st.session_state.scroll_to_top = True
                 st.rerun()
-                
-    st.markdown("</div>", unsafe_allow_html=True)
