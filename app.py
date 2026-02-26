@@ -391,7 +391,7 @@ with list_col:
         current_label = labels[0] if labels else "1"
 
     chosen = st.radio(
-        label="pagination",
+        label="",
         options=labels,
         index=labels.index(current_label) if labels else 0,
         horizontal=True,
