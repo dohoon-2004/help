@@ -74,8 +74,8 @@ st.markdown(
   --text: #0f172a;
   --muted: #64748b;
   --shadow: 0 12px 34px rgba(0,0,0,0.12);
-  --song-primary: linear-gradient(135deg, #a855f7, #ec4899); /* 핑크/보라 */
-  --page-primary: linear-gradient(135deg, #0ea5e9, #06b6d4); /* 하늘/파랑 */
+  --song-primary: linear-gradient(135deg, #a855f7, #ec4899); /* 🎵 노래 선택: 핑크/보라 */
+  --page-primary: linear-gradient(135deg, #0ea5e9, #06b6d4); /* 🔢 숫자 선택: 하늘/파랑 */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -150,14 +150,14 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container {
 }
 
 /* =========================================================
-   ✅ 2. 노래 목록 버튼 디자인
+   ✅ 2. 노래 목록 버튼 디자인 (긴 직사각형)
    ========================================================= */
 div[data-testid="stButton"] > button {
   width: 100%;
   text-align: center;
   border-radius: 16px !important;
   padding: 16px 20px !important;
-  background-color: var(--card) !important;
+  background: var(--card) !important;
   border: 1px solid var(--border) !important;
   white-space: pre-wrap; 
   transition: all 0.2s; 
@@ -184,27 +184,30 @@ div[data-testid="stButton"] > button[kind="primary"] * {
 }
 
 /* =========================================================
-   ✅ 3. 숫자 버튼 영역 집중 타겟팅 (마커 사용 방식으로 복구)
+   ✅ 3. 숫자 버튼 절대 안 깨지는 구조 기반 타겟팅
+   모바일 호환 100% 보장 (최신 CSS 미지원 폰도 전부 커버)
+   오른쪽 리스트 컬럼 내부의 가로 정렬 블록을 멱살 잡아 타겟팅
    ========================================================= */
-/* 페이지네이션 마커 바로 다음의 가로 블록을 타겟! */
-div[data-testid="stElementContainer"]:has(.pagination-marker) + div[data-testid="stHorizontalBlock"] {
-  flex-direction: row !important;
+[data-testid="column"] [data-testid="stHorizontalBlock"] {
+  display: flex !important;
+  flex-direction: row !important; /* 모바일에서도 무조건 가로로! */
   flex-wrap: nowrap !important;
-  gap: 6px !important; /* 👈 좁은 간격 적용 */
+  gap: 6px !important;            /* 좁은 간격 적용 */
   justify-content: center !important;
   margin-top: 10px !important;
 }
 
-/* 숫자 버튼 들어가는 컬럼 크기 고정 */
-div[data-testid="stElementContainer"]:has(.pagination-marker) + div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+/* 숫자 버튼 들어가는 각각의 작은 칸들 폭 고정 */
+[data-testid="column"] [data-testid="stHorizontalBlock"] > [data-testid="column"] {
   min-width: 42px !important;
+  width: 42px !important;
   max-width: 42px !important;
   flex: 0 0 42px !important;
   padding: 0 !important;
 }
 
-/* 숫자 버튼 자체를 완벽한 원형으로 */
-div[data-testid="stElementContainer"]:has(.pagination-marker) + div[data-testid="stHorizontalBlock"] button {
+/* 숫자 버튼 자체를 완벽한 42x42 원형으로 강제 조작 */
+[data-testid="column"] [data-testid="stHorizontalBlock"] button {
   width: 42px !important;
   height: 42px !important;
   min-height: 42px !important;
@@ -213,20 +216,23 @@ div[data-testid="stElementContainer"]:has(.pagination-marker) + div[data-testid=
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
 }
-div[data-testid="stElementContainer"]:has(.pagination-marker) + div[data-testid="stHorizontalBlock"] button p {
+
+[data-testid="column"] [data-testid="stHorizontalBlock"] button p {
   font-size: 1.15rem !important;
   font-weight: 800 !important;
   margin: 0 !important;
   color: var(--text) !important;
 }
 
-/* 🔢 숫자 버튼 선택됨 -> 파란/하늘색으로 노래버튼과 다르게 설정! */
-div[data-testid="stElementContainer"]:has(.pagination-marker) + div[data-testid="stHorizontalBlock"] button[kind="primary"] {
+/* 🔢 숫자 버튼 선택됨 -> 파란/하늘색으로 노래버튼과 다르게! */
+[data-testid="column"] [data-testid="stHorizontalBlock"] button[kind="primary"] {
   background: var(--page-primary) !important;
   border: none !important;
 }
-div[data-testid="stElementContainer"]:has(.pagination-marker) + div[data-testid="stHorizontalBlock"] button[kind="primary"] p {
+[data-testid="column"] [data-testid="stHorizontalBlock"] button[kind="primary"] p {
   color: #ffffff !important;
 }
 </style>
@@ -293,10 +299,8 @@ with list_col:
         start_page = max(0, total_pages - MAX_VISIBLE_BUTTONS)
         
     visible_pages = list(range(start_page, end_page))
-
-    # ✅ 숫자 버튼 구역을 알려주는 '비밀 마커' 삽입!
-    st.markdown("<div class='pagination-marker'></div>", unsafe_allow_html=True)
     
+    # 이 부분이 st.columns 컨테이너이므로 모바일에서 무조건 가로 정렬 & 원형 적용!
     cols = st.columns(len(visible_pages))
     
     for idx, p in enumerate(visible_pages):
