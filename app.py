@@ -49,27 +49,38 @@ if st.session_state.get("scroll_to_top"):
     st.session_state.scroll_to_top = False
 
 # -----------------------------
-# CSS 
+# CSS (폰트/색상/모바일 다크 안정화)
 # -----------------------------
 st.markdown(
     """
 <style>
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v3.2.1/dist/web/static/pretendard.css");
-* { font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important; }
 
+/* Streamlit 기본 UI 숨김 */
 #MainMenu, footer, header, .stAppDeployButton, [data-testid="stToolbar"], [data-testid="stHeader"] {
   display: none !important;
 }
 
 /* =========================================================
-   ✅ 모바일 브라우저의 '강제 다크모드(색 반전)' 엔진 원천 차단
+   ✅ 폰트 최적화 (가독성/스무딩/반응형)
    ========================================================= */
-html {
-  color-scheme: light dark !important; 
+* {
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", Arial, sans-serif !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
 }
 
-/* ---------- 다크/라이트 모드 테마 변수 ---------- */
+html, body {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* =========================================================
+   ✅ 모바일 다크모드(색 꼬임) 안정화: 투명 rgba 최소화 + 변수 고정
+   ========================================================= */
 :root{
+  color-scheme: light;
   --bg: #ffffff;
   --card: #f8fafc;
   --border: #e2e8f0;
@@ -82,29 +93,43 @@ html {
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root{
+    color-scheme: dark;
     --bg: #0f1014;
-    --card: rgba(255,255,255,0.06);
-    --border: rgba(255,255,255,0.14);
-    --text: rgba(255,255,255,0.95);
-    --muted: rgba(255,255,255,0.65);
-    --shadow: 0 12px 34px rgba(0,0,0,0.25);
+    --card: #171a22;     /* ✅ rgba → 고정 hex로 */
+    --border: #2a2f3a;   /* ✅ rgba → 고정 hex로 */
+    --text: #f1f5f9;
+    --muted: #aab2c2;
+    --shadow: 0 12px 34px rgba(0,0,0,0.35);
   }
 }
 
-/* Streamlit이 생성하는 다크모드 DOM에도 변수 덮어씌우기 (어떤 환경이든 완벽 적용) */
+/* Streamlit 다크 DOM/변형에도 변수 강제 */
 [data-theme="dark"], html.dark, body.dark, .stApp.dark {
   --bg: #0f1014 !important;
-  --card: rgba(255,255,255,0.06) !important;
-  --border: rgba(255,255,255,0.14) !important;
-  --text: rgba(255,255,255,0.95) !important;
-  --muted: rgba(255,255,255,0.65) !important;
-  --shadow: 0 12px 34px rgba(0,0,0,0.25) !important;
+  --card: #171a22 !important;
+  --border: #2a2f3a !important;
+  --text: #f1f5f9 !important;
+  --muted: #aab2c2 !important;
+  --shadow: 0 12px 34px rgba(0,0,0,0.35) !important;
 }
 
+/* =========================================================
+   ✅ 전체 배경/텍스트 색상 최적화 (모바일에서 글자색 꼬임 방지)
+   ========================================================= */
 html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
   background: var(--bg) !important;
+  color: var(--text) !important;
 }
+
+p, span, label, small, li, div,
+h1, h2, h3, h4, h5, h6,
+.stMarkdown, .stMarkdown p {
+  color: var(--text) !important;
+  -webkit-text-fill-color: var(--text) !important;
+}
+
+/* 레이아웃 */
 .block-container{
   padding-top: 0.2rem !important;
   padding-bottom: 0.8rem;
@@ -112,17 +137,18 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
 }
 
 /* =========================================================
-   ✅ 글귀 정중앙 정렬, 크기 축소 & 밑에 여백 넉넉히 추가
+   ✅ 상단 글귀 (반응형 폰트 + 중앙)
    ========================================================= */
 .headline{
-  font-size: 2.0rem !important;  /* 크기 소폭 축소 (2.2 -> 2.0) */
+  font-size: clamp(1.6rem, 5vw, 2.0rem) !important;
   font-weight: 900;
   letter-spacing: -0.6px;
-  margin: 0.2rem 0 1.5rem 0 !important; /* 아래 여백 대폭 추가 (0.4 -> 1.5) */
+  margin: 0.2rem 0 1.5rem 0 !important;
   color: var(--text) !important;
   text-align: center !important; 
 }
 
+/* 유튜브 */
 .yt-wrap{
   position: relative;
   padding-top: 56.25%;
@@ -134,27 +160,30 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
 .yt-wrap iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
 
 /* =========================================================
-   ✅ 플레이어 아래 텍스트 (여백 대폭 축소 & 크기 소폭 축소)
+   ✅ 플레이어 아래 텍스트: 더 가깝게 + 오른쪽 살짝 이동
    ========================================================= */
 .song-info{
-  margin-top: 0.1rem !important; /* 플레이어와 제목 사이 여백 거의 없앰 */
+  margin-top: 0rem !important;        /* ✅ 더 붙이기 */
   margin-bottom: 1.8rem;
+  padding-left: 10px !important;      /* ✅ 살짝 오른쪽 이동 */
 }
 .song-title{ 
-  font-size: 1.5rem !important;  /* 크기 소폭 축소 (1.65 -> 1.5) */
+  font-size: clamp(1.25rem, 3.6vw, 1.5rem) !important;
   font-weight: 800; 
   color: var(--text) !important; 
-  margin:0; 
+  margin:0 !important;
+  line-height: 1.15 !important;
 }
 .song-artist{ 
-  font-size: 1.25rem !important; /* 크기 소폭 축소 (1.40 -> 1.25) */
+  font-size: clamp(1.05rem, 3.2vw, 1.25rem) !important;
   font-weight: 600; 
   color: var(--muted) !important; 
-  margin:0.1rem 0 0 0 !important; /* 제목과 가수 사이 여백도 좁게 */
+  margin:0.05rem 0 0 0 !important;    /* ✅ 제목-가수 간격 더 좁게 */
+  line-height: 1.15 !important;
 }
 
 /* =========================================================
-   ✅ 노래 목록 버튼 (핑크/보라 유지)
+   ✅ 노래 목록 버튼 (텍스트 색/대비 개선)
    ========================================================= */
 div[data-testid="stButton"] > button {
   width: 100%;
@@ -166,13 +195,13 @@ div[data-testid="stButton"] > button {
   box-shadow: 0 4px 10px rgba(0,0,0,0.03) !important;
   white-space: pre-wrap !important;
   transition: all 0.15s;
-  font-size: 0.95rem;
+  font-size: clamp(0.9rem, 2.8vw, 0.95rem) !important;
   font-weight: 650;
 }
 div[data-testid="stButton"] > button p { color: var(--muted) !important; }
 div[data-testid="stButton"] > button::first-line,
 div[data-testid="stButton"] > button p::first-line {
-  font-size: 1.25rem !important;
+  font-size: clamp(1.05rem, 3.2vw, 1.25rem) !important;
   font-weight: 850 !important;
   color: var(--text) !important;
 }
@@ -184,10 +213,11 @@ div[data-testid="stButton"] > button[kind="primary"] {
 }
 div[data-testid="stButton"] > button[kind="primary"] * {
   color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 /* =========================================================
-   ✅ 숫자 버튼 (st.radio) 중앙 정렬 & 숫자를 원 중앙에
+   ✅ 페이지네이션(숫자 버튼): "가운데 정렬" 확실히 고정
    ========================================================= */
 div[data-testid="stRadio"] { 
   margin-top: 10px; 
@@ -197,10 +227,15 @@ div[data-testid="stRadio"] {
 div[data-testid="stRadio"] [role="radiogroup"] {
   display: flex !important;
   flex-direction: row !important;
-  justify-content: center !important; 
+  justify-content: center !important; /* ✅ 가운데 */
+  align-items: center !important;
+
   gap: 12px !important;
   flex-wrap: nowrap !important;
-  width: 100% !important;
+
+  width: fit-content !important;      /* ✅ 콘텐츠 폭만 */
+  margin: 0 auto !important;          /* ✅ 전체에서 중앙 */
+  padding: 0 !important;
 }
 
 div[data-testid="stRadio"] label {
@@ -249,7 +284,7 @@ div[data-testid="stRadio"] label > div:last-child {
 }
 
 div[data-testid="stRadio"] label p {
-  font-size: 1.25rem !important;
+  font-size: clamp(1.05rem, 3.2vw, 1.25rem) !important;
   font-weight: 850 !important;
   color: var(--text) !important;
   margin: 0 !important;
@@ -257,15 +292,24 @@ div[data-testid="stRadio"] label p {
   line-height: 1 !important;
 }
 
-/* 선택된 숫자 버튼 색상 변경 (모바일 호환 100%) */
+/* 선택된 숫자 버튼 */
 div[data-testid="stRadio"] input[type="radio"]:checked ~ div:last-child {
   background: var(--page-grad) !important;
   border: none !important;
   box-shadow: 0 6px 15px rgba(14,165,233,0.3) !important;
 }
-
 div[data-testid="stRadio"] input[type="radio"]:checked ~ div:last-child p {
   color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+/* =========================================================
+   ✅ 모바일에서 여백/크기 조금 더 다듬기 (선택)
+   ========================================================= */
+@media (max-width: 520px) {
+  .block-container{ padding-left: 0.8rem !important; padding-right: 0.8rem !important; }
+  .song-info{ padding-left: 6px !important; margin-bottom: 1.4rem !important; }
+  div[data-testid="stButton"] > button { padding: 14px 16px !important; border-radius: 14px !important; }
 }
 </style>
 """,
@@ -336,11 +380,11 @@ with list_col:
         current_label = labels[0] if labels else "1"
 
     chosen = st.radio(
-        label="",
+        label="pagination",
         options=labels,
         index=labels.index(current_label) if labels else 0,
         horizontal=True,
-        label_visibility="collapsed", 
+        label_visibility="collapsed",
         key="pager_radio",
     )
 
