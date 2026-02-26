@@ -39,7 +39,7 @@ def yt_embed(video_id: str, title: str):
       ></iframe>
     </div>
     """
-    components.html(html, height=190)
+    components.html(html, height=150)
 
 st.set_page_config(page_title="player", page_icon="🎧", layout="wide")
 
