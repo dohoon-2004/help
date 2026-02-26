@@ -9,7 +9,7 @@ SONGS = [
     {"id": "stronger", "title": "Stronger (What Doesn't Kill You)", "artist": "Kelly Clarkson", "videoId": "Xn676-fLq7I"},
 ]
 
-HEADLINES = ["진짜 사랑해", "고마워", "옆에 있어줘", "덕분에 행복해"]
+HEADLINES = ["진짜 사랑해", "고마워", "옆에 있어줘", "덕분에 행복해", "안아줄게", "맛있는 거 먹자", "바다보러 갈래?"]
 
 def yt_embed(video_id: str, title: str):
     src = f"https://www.youtube-nocookie.com/embed/{video_id}?rel=0&controls=1"
