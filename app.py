@@ -107,23 +107,32 @@ header {visibility: hidden;}
   margin-bottom: -15px;   
 }
 
-/* 텍스트가 버튼을 가리지 않게 너비 제한 */
+/* ✅ 텍스트가 버튼을 절대 가리지 않게 오른쪽 공간 확보 */
 .list-text{
-  width: 75%; 
+  width: 70%; 
 }
 
+/* ✅ 제목이 길면 ... 으로 예쁘게 잘리게 설정 */
 .list-title{
   font-size: 1.15rem;
   font-weight: 900;
   color: rgba(255,255,255,0.92);
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
+/* ✅ 가수명도 동일하게 설정 */
 .list-artist{
-  font-size: 1.15rem;
+  font-size: 1.10rem;
   font-weight: 500;
   color: rgba(255,255,255,0.65);
   margin-top: 6px;
   line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* 체크 버튼을 박스 안(위)으로 강제로 끌어올리기 */
@@ -178,7 +187,8 @@ with list_col:
             unsafe_allow_html=True,
         )
 
-        btn_col_l, btn_col_r = st.columns([0.82, 0.18])
+        # ✅ 버튼 자리(오른쪽)를 넉넉하게 확보 ([0.75, 0.25] 비율)
+        btn_col_l, btn_col_r = st.columns([0.75, 0.25])
         with btn_col_l:
             st.write("")
         with btn_col_r:
