@@ -10,6 +10,13 @@ SONGS = [
     {"id": "its-time", "title": "It's Time", "artist": "Imagine Dragons", "videoId": "NASqUELHjPE"},
     {"id": "iu-night-letter", "title": "밤편지", "artist": "아이유", "videoId": "EjMTw4xLcBI"},
     {"id": "stronger", "title": "Stronger", "artist": "Kelly Clarkson", "videoId": "Xn676-fLq7I"},
+    {"id": "blackpink-ddu-du-ddu-du", "title": "DDU-DU DDU-DU", "artist": "BLACKPINK", "videoId": "IHNzOHi8sJs"},
+    {"id": "sia-unstoppable", "title": "Unstoppable", "artist": "Sia", "videoId": "kIjUfXfJjGU"},
+    {"id": "iu-blueming", "title": "Blueming", "artist": "아이유(IU)", "videoId": "D1PvIWdJ8xo"},
+    {"id": "iu-celebrity", "title": "Celebrity", "artist": "아이유(IU)", "videoId": "0-q1KafFCLU"},
+    {"id": "akmu-200-percent", "title": "200%", "artist": "AKMU(악동뮤지션)", "videoId": "0Oi8jDMvd_w"},
+    {"id": "bol4-hug", "title": "Hug (품)", "artist": "볼빨간사춘기(BOL4)", "videoId": "qfeoX17dav0"},
+
 ]
 
 # 상단 글귀
