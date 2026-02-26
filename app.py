@@ -5,7 +5,7 @@ import streamlit.components.v1 as components
 # 1) 노래 목록(여기에만 추가/수정)
 # -----------------------------
 SONGS = [
-    {"id": "river-flows-in-you", "title": "River Flows in You", "artist": "Yiruma", "videoId": ""},
+    {"id": "river-flows-in-you", "title": "River Flows in You", "artist": "Yiruma", "videoId": "https://www.youtube.com/watch?v=7maJOI3QMu0&list=RD7maJOI3QMu0&start_radio=1"},
 ]
 
 # -----------------------------
