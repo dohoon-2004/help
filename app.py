@@ -4,9 +4,9 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 # -----------------------------
-# 노래 목록
+# 노래 목록 (테스트를 위해 30곡으로 늘려두었습니다)
 # -----------------------------
-SONGS = [
+BASE_SONGS = [
     {"id": "river-flows-in-you", "title": "River Flows in You", "artist": "Yiruma", "videoId": "7maJOI3QMu0"},
     {"id": "its-time", "title": "It's Time", "artist": "Imagine Dragons", "videoId": "NASqUELHjPE"},
     {"id": "iu-night-letter", "title": "밤편지", "artist": "아이유", "videoId": "EjMTw4xLcBI"},
@@ -18,6 +18,13 @@ SONGS = [
     {"id": "akmu-200-percent", "title": "200%", "artist": "AKMU", "videoId": "0Oi8jDMvd_w"},
     {"id": "bol4-hug", "title": "Hug", "artist": "볼빨간사춘기", "videoId": "qfeoX17dav0"},
 ]
+# 곡이 많을 때 '최대 5개 표시'가 작동하는지 보기 위해 3배로 복사
+SONGS = []
+for i in range(3):
+    for song in BASE_SONGS:
+        new_song = song.copy()
+        new_song["id"] = f"{song['id']}_{i}"
+        SONGS.append(new_song)
 
 HEADLINES = ["진짜 사랑해", "고마워", "옆에 있어줘", "덕분에 행복해", "안아줄게", "맛있는 거 먹자", "바다보러 갈래?"]
 
@@ -37,14 +44,10 @@ def yt_embed(video_id: str, title: str):
 
 st.set_page_config(page_title="player", page_icon="🎧", layout="wide")
 
-# ✅ 페이지 이동 시 맨 위로 스크롤하는 자바스크립트 실행 (상태에 따라 한 번만 동작)
+# 맨 위로 스크롤
 if "scroll_to_top" in st.session_state and st.session_state.scroll_to_top:
     components.html(
-        """
-        <script>
-            window.parent.scrollTo({top: 0, behavior: 'smooth'});
-        </script>
-        """,
+        "<script>window.parent.scrollTo({top: 0, behavior: 'smooth'});</script>",
         height=0, width=0
     )
     st.session_state.scroll_to_top = False
@@ -65,20 +68,20 @@ header {visibility: hidden !important;}
 [data-testid="stToolbar"] {display: none !important;}
 [data-testid="stHeader"] {display: none !important;}
 
-/* ✅ 배경을 이전보다 훨씬 부드럽고 밝은 다크 네이비/슬레이트 톤으로 변경 */
+/* ✅ 아주 밝고 화사한 라이트 그레이/화이트 배경 */
 [data-testid="stAppViewContainer"] { 
-  background: linear-gradient(135deg, #1f232d 0%, #2e3542 100%); 
+  background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); 
 }
 .block-container { padding-top: 1.0rem; padding-bottom: 0.8rem; max-width: 1200px; }
 
-/* 상단 글귀 */
+/* 상단 글귀 (밝은 배경에 맞춰 진한 색으로 변경) */
 .headline{
   font-size: 2.2rem; 
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: -0.6px;
   margin-top: 0.7rem;
   margin-bottom: 0.9rem;
-  color: rgba(255,255,255,0.95);
+  color: #111827;
 }
 
 /* 플레이어 */
@@ -88,7 +91,7 @@ header {visibility: hidden !important;}
   border-radius: 18px;
   overflow: hidden;
   background: #000;
-  box-shadow: 0 12px 34px rgba(0,0,0,0.25);
+  box-shadow: 0 12px 34px rgba(0,0,0,0.15);
 }
 .yt-wrap iframe{
   position: absolute; inset: 0;
@@ -107,66 +110,66 @@ header {visibility: hidden !important;}
   margin-bottom: 3.5rem;
 }
 
-/* ✅ 플레이어 밑 제목 살짝 더 키움 (1.65rem) */
+/* 플레이어 밑 제목 (어두운 색으로 가독성 확보) */
 .song-title{
   font-size: 1.65rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.4px;
-  color: #ffffff;
+  color: #111827;
   text-align: left;
   margin: 0;
 }
 .song-artist{
   font-size: 1.40rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: -0.4px;
   margin-top: 0.2rem;
-  color: rgba(255,255,255,0.75);
+  color: #4b5563;
   text-align: left;
   margin-bottom: 0;
 }
 
-/* 목록 버튼 (글래스모피즘) */
+/* ✅ 목록 버튼 (밝은 테마 글래스모피즘) */
 div[data-testid="stButton"] > button {
   width: 100%;
   text-align: center;
   border-radius: 16px;
   padding: 18px 22px;
-  background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.1);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
   white-space: pre-wrap; 
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
   
   font-size: 0.95rem;
-  font-weight: 500;
-  color: rgba(255,255,255,0.6) !important;
+  font-weight: 600;
+  color: #64748b !important;
   line-height: 1.6;
 }
 
-/* 첫 번째 줄(제목) 분리 */
+/* 첫 번째 줄(제목) */
 div[data-testid="stButton"] > button::first-line,
 div[data-testid="stButton"] > button p::first-line {
   font-size: 1.25rem;
   font-weight: 800;
-  color: #ffffff;
+  color: #0f172a;
   line-height: 1.4;
 }
 
 /* Hover 효과 */
 div[data-testid="stButton"] > button[kind="secondary"]:hover {
-  background: linear-gradient(145deg, rgba(255,255,255,0.12), rgba(255,255,255,0.05));
-  border-color: rgba(255,255,255,0.3);
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(0, 0, 0, 0.1);
   transform: translateY(-3px);
-  color: rgba(255,255,255,0.8) !important;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
 }
 
-/* 선택된 버튼 하이라이트 */
+/* 선택된 버튼 하이라이트 (보라/핑크 그라데이션 유지) */
 div[data-testid="stButton"] > button[kind="primary"] {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.35), rgba(168, 85, 247, 0.35)) !important;
-  border: 1px solid rgba(168, 85, 247, 0.6) !important;
-  box-shadow: 0 0 20px rgba(168, 85, 247, 0.2) !important;
+  background: linear-gradient(135deg, #6366f1, #a855f7) !important;
+  border: none !important;
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.3) !important;
   transform: translateY(0px); 
 }
 
@@ -174,34 +177,42 @@ div[data-testid="stButton"] > button[kind="primary"]::first-line,
 div[data-testid="stButton"] > button[kind="primary"] p::first-line {
   color: #ffffff;
 }
+div[data-testid="stButton"] > button[kind="primary"] {
+  color: rgba(255,255,255,0.85) !important;
+}
 
 div[data-testid="stButton"] > button:focus:not(:active) { border-color: inherit !important; box-shadow: inherit !important; }
 
 /* =========================================================
-   ✅ 최신 CSS 트릭: 모바일에서 1, 2 버튼이 절대 안 깨지게 강제 가로 정렬
+   ✅ 모바일 숫자 버튼 무조건 한 줄 & 동그라미로 강제 고정
    ========================================================= */
 div[data-testid="stElementContainer"]:has(.page-numbers-row) + div[data-testid="stHorizontalBlock"] {
     flex-direction: row !important;
     flex-wrap: nowrap !important;
-    gap: 12px !important;
+    gap: 8px !important;
     justify-content: center !important;
     margin-top: 15px;
 }
 div[data-testid="stElementContainer"]:has(.page-numbers-row) + div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
-    min-width: 0 !important;
+    min-width: unset !important;
     width: auto !important;
-    flex: 1 1 0px !important;
+    flex: 0 0 auto !important;
 }
 
-/* 숫자 버튼 자체의 디자인 (목록 버튼과 다르게 설정) */
+/* 숫자 버튼 동그라미 디자인 */
 div[data-testid="stElementContainer"]:has(.page-numbers-row) + div[data-testid="stHorizontalBlock"] button {
-    padding: 12px 10px !important;
-    border-radius: 14px !important;
+    padding: 0 !important;
+    border-radius: 50% !important; /* 완벽한 원형 */
+    width: 2.8rem !important;      /* 고정 크기 */
+    height: 2.8rem !important;
     font-size: 1.15rem !important;
     font-weight: 800 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 div[data-testid="stElementContainer"]:has(.page-numbers-row) + div[data-testid="stHorizontalBlock"] button::first-line {
-    font-size: 1.15rem !important; /* 숫자 버튼은 글씨 크기 고정 */
+    font-size: 1.15rem !important;
 }
 </style>
 """,
@@ -255,18 +266,30 @@ with list_col:
             st.session_state.scroll_to_top = True # 노래 바꿔도 맨 위로 스크롤
             st.rerun()
 
-    # ✅ 모바일 가로 정렬을 위한 비밀 마커 삽입
+    # ✅ 최대 5개의 숫자만 보여주는 페이지네이션 로직
+    MAX_VISIBLE_BUTTONS = 5
+    half_window = MAX_VISIBLE_BUTTONS // 2
+    
+    start_page = max(0, st.session_state.page - half_window)
+    end_page = start_page + MAX_VISIBLE_BUTTONS
+    
+    # 끝 페이지가 전체 페이지 수를 넘어가면 조정
+    if end_page > total_pages:
+        end_page = total_pages
+        start_page = max(0, total_pages - MAX_VISIBLE_BUTTONS)
+        
+    visible_pages = list(range(start_page, end_page))
+
+    # 모바일 가로 정렬용 마커
     st.markdown('<div class="page-numbers-row"></div>', unsafe_allow_html=True)
     
-    # 숫자 버튼 (가운데 정렬을 위해 빈 공간을 양쪽에 넣음)
-    layout = [1.5] + [1] * total_pages + [1.5]
-    cols = st.columns(layout)
+    cols = st.columns(len(visible_pages))
     
-    for i in range(total_pages):
-        with cols[i + 1]:
-            btn_type = "primary" if st.session_state.page == i else "secondary"
-            if st.button(str(i + 1), key=f"page_btn_{i}", use_container_width=True, type=btn_type):
-                st.session_state.page = i
-                st.session_state.headline = random.choice(HEADLINES) # ✅ 글귀 변경
-                st.session_state.scroll_to_top = True # ✅ 맨 위로 스크롤
+    for idx, p in enumerate(visible_pages):
+        with cols[idx]:
+            btn_type = "primary" if st.session_state.page == p else "secondary"
+            if st.button(str(p + 1), key=f"page_btn_{p}", use_container_width=True, type=btn_type):
+                st.session_state.page = p
+                st.session_state.headline = random.choice(HEADLINES) # 글귀 변경
+                st.session_state.scroll_to_top = True # 맨 위로 스크롤
                 st.rerun()
