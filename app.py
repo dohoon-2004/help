@@ -49,7 +49,7 @@ if st.session_state.get("scroll_to_top"):
     st.session_state.scroll_to_top = False
 
 # -----------------------------
-# CSS 
+# CSS (모바일 100% 호환, 숫자 안 사라짐!)
 # -----------------------------
 st.markdown(
     """
@@ -61,7 +61,7 @@ st.markdown(
   display: none !important;
 }
 
-/* ---------- theme variables ---------- */
+/* ---------- 다크/라이트 모드 테마 변수 ---------- */
 :root{
   --bg: #ffffff;
   --card: #f8fafc;
@@ -74,7 +74,6 @@ st.markdown(
   --page-grad: linear-gradient(135deg, #0ea5e9, #06b6d4);
 }
 
-/* Streamlit dark theme */
 html[data-theme="dark"], body[data-theme="dark"], .stApp[data-theme="dark"],
 html.dark, body.dark, .stApp.dark{
   --bg: #0f1014;
@@ -94,7 +93,6 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
   max-width: 1200px;
 }
 
-/* ---------- headline ---------- */
 .headline{
   font-size: 2.2rem;
   font-weight: 900;
@@ -103,7 +101,6 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
   color: var(--text) !important;
 }
 
-/* ---------- player ---------- */
 .yt-wrap{
   position: relative;
   padding-top: 56.25%;
@@ -122,7 +119,7 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
 .song-artist{ font-size: 1.40rem; font-weight: 600; color: var(--muted); margin:0.2rem 0 0 0; }
 
 /* =========================================================
-   ✅ 노래 목록 버튼 (st.button 형식 원래대로 완벽 복구)
+   ✅ 노래 목록 버튼 (핑크/보라 유지)
    ========================================================= */
 div[data-testid="stButton"] > button {
   width: 100%;
@@ -145,6 +142,7 @@ div[data-testid="stButton"] > button p::first-line {
   color: var(--text) !important;
 }
 
+/* 노래 버튼 선택 시 핑크/보라 그라데이션 */
 div[data-testid="stButton"] > button[kind="primary"] {
   background: var(--song-grad) !important;
   border: none !important;
@@ -159,13 +157,7 @@ div[data-testid="stButton"] > button[kind="primary"] * {
    ========================================================= */
 div[data-testid="stRadio"] { margin-top: 10px; }
 
-div[data-testid="stRadio"] > label {
-  display: none !important;
-  height: 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
+/* 라디오 버튼 그룹 가로 중앙 정렬 */
 div[data-testid="stRadio"] [role="radiogroup"] {
   display: flex !important;
   flex-direction: row !important;
@@ -173,52 +165,60 @@ div[data-testid="stRadio"] [role="radiogroup"] {
   gap: 12px !important;
   flex-wrap: nowrap !important;
   width: 100% !important;
-  align-items: center !important;
 }
 
+/* 라디오 라벨 컨테이너 (여기에 아무것도 가리지 않게 수정) */
 div[data-testid="stRadio"] label {
-  position: relative !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important; 
+  width: 48px !important;
+  height: 48px !important;
   margin: 0 !important;
   padding: 0 !important;
+  display: inline-flex !important;
+  position: relative !important;
   cursor: pointer !important;
-  width: 48px !important; 
-  height: 48px !important;
+  border: none !important;
+  background: transparent !important;
 }
 
-div[data-testid="stRadio"] label > div:first-child {
+/* 기존 Streamlit의 파란 점(기본 라디오 표시) 없애기 */
+div[data-testid="stRadio"] label > div:first-of-type {
   display: none !important;
 }
 
+/* 실제 클릭되는 라디오 input (눈에 안 보이지만 원 전체를 덮음) */
 div[data-testid="stRadio"] input[type="radio"] {
-  appearance: none !important;
-  -webkit-appearance: none !important;
   position: absolute !important;
-  inset: 0 !important; 
-  width: 100% !important; height: 100% !important;
-  border-radius: 50% !important;
-  background: var(--card) !important;
-  border: 1px solid var(--border) !important;
-  margin: 0 !important; padding: 0 !important;
-  box-sizing: border-box !important;
-  z-index: 1 !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0 !important; 
+  margin: 0 !important;
+  z-index: 10 !important;
+  cursor: pointer !important;
 }
 
+/* ✅ 텍스트와 배경이 들어가는 실제 원형 박스 (이게 숫자를 담는 그릇입니다) */
 div[data-testid="stRadio"] label > div:last-child {
-  position: relative !important;
-  z-index: 10 !important; 
-  pointer-events: none !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
   display: flex !important;
   align-items: center !important;
-  justify-content: center !important;
+  justify-content: center !important; /* 숫자 완벽한 중앙 정렬 */
+  border-radius: 50% !important;
+  background: var(--card) !important; /* 기본 배경색 */
+  border: 1px solid var(--border) !important;
+  z-index: 1 !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s !important;
 }
 
+/* 숫자 폰트 크기 및 색상 */
 div[data-testid="stRadio"] label p {
-  font-size: 1.2rem !important;
+  font-size: 1.25rem !important;
   font-weight: 850 !important;
   color: var(--text) !important;
   margin: 0 !important;
@@ -226,13 +226,18 @@ div[data-testid="stRadio"] label p {
   line-height: 1 !important;
 }
 
-div[data-testid="stRadio"] input[type="radio"]:checked {
+/* =========================================================
+   ✅ 핵심: 선택된 숫자 버튼 색상 변경 (모바일 호환 100%)
+   ========================================================= */
+/* 체크된 input의 '바로 옆'에 있는 div의 배경을 파랑/하늘색으로 바꿈 */
+div[data-testid="stRadio"] input[type="radio"]:checked ~ div:last-child {
   background: var(--page-grad) !important;
   border: none !important;
-  box-shadow: 0 8px 18px rgba(14,165,233,0.3) !important;
+  box-shadow: 0 6px 15px rgba(14,165,233,0.3) !important;
 }
 
-div[data-testid="stRadio"] label:has(input[type="radio"]:checked) p {
+/* 체크된 input의 '바로 옆'에 있는 div 안의 숫자를 하얀색으로 바꿈 */
+div[data-testid="stRadio"] input[type="radio"]:checked ~ div:last-child p {
   color: #ffffff !important;
 }
 </style>
@@ -303,16 +308,15 @@ with list_col:
     if current_label not in labels:
         current_label = labels[0] if labels else "1"
 
-    st.markdown("<div class='pager'>", unsafe_allow_html=True)
+    # ✅ "pages" 글씨는 label_visibility="collapsed" 옵션으로 HTML 렌더링 자체를 막았습니다.
     chosen = st.radio(
-        label=" ", # ✅ "pages" 글씨를 아예 빈칸으로 삭제해버렸습니다!
+        label="pagination",
         options=labels,
         index=labels.index(current_label) if labels else 0,
         horizontal=True,
-        label_visibility="collapsed",
+        label_visibility="collapsed", 
         key="pager_radio",
     )
-    st.markdown("</div>", unsafe_allow_html=True)
 
     if labels:
         new_page = int(chosen) - 1
