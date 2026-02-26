@@ -68,25 +68,34 @@ header {visibility: hidden !important;}
 [data-testid="stHeader"] {display: none !important;}
 
 /* =========================================================
-   ✅ 1. 색상 강제 지정 (다크 모드 절대 무시)
+   ✅ 1. 배경색 강제 화이트 (뿌리부터 전부 하얗게 도배)
    ========================================================= */
-body, .stApp, [data-testid="stAppViewContainer"], .block-container { 
-  background-color: #f1f5f9 !important; /* 밝은 회색 바탕 강제 지정 */
+html, body, .stApp, [data-testid="stAppViewContainer"], .block-container { 
+  background-color: #ffffff !important; 
   background-image: none !important;
 }
 
-/* 텍스트 색상 강제 지정 (무조건 진한 색) */
+/* 모든 텍스트 기본색 블랙 강제 */
 p, span, div, h1, h2, h3 {
-  color: #0f172a !important; 
+  color: #000000 !important; 
+}
+
+/* =========================================================
+   ✅ 2. 상단 여백 대폭 축소 (글귀 위아래 여백 다이어트)
+   ========================================================= */
+.block-container { 
+  padding-top: 0.2rem !important;  /* 👈 맨 위 여백 확 줄임 */
+  padding-bottom: 0.8rem; 
+  max-width: 1200px; 
 }
 
 .headline {
   font-size: 2.2rem; 
   font-weight: 900;
   letter-spacing: -0.6px;
-  margin-top: 0.7rem;
-  margin-bottom: 0.9rem;
-  color: #020617 !important; 
+  margin-top: 0.2rem !important;    /* 👈 글귀 위 여백 줄임 */
+  margin-bottom: 0.4rem !important; /* 👈 글귀 아래 여백 줄임 */
+  color: #0f172a !important; 
 }
 
 /* 플레이어 */
@@ -126,17 +135,16 @@ p, span, div, h1, h2, h3 {
 }
 
 /* =========================================================
-   ✅ 2. 노래 목록 버튼 (흰색 바탕 강제)
+   ✅ 노래 목록 버튼 (화이트 톤 & 핑크 포인트)
    ========================================================= */
 div[data-testid="stButton"] > button {
   width: 100%;
   text-align: center;
   border-radius: 16px !important;
-  padding: 18px 22px !important;
-  background-color: #ffffff !important;
-  background-image: none !important;
-  border: 1px solid #cbd5e1 !important;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.04) !important;
+  padding: 16px 20px !important;
+  background-color: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03) !important;
   white-space: pre-wrap; 
   transition: all 0.2s; 
   font-size: 0.95rem;
@@ -152,7 +160,7 @@ div[data-testid="stButton"] > button p::first-line {
   color: #0f172a !important;
 }
 
-/* 🎵 노래 버튼 선택 시 색상 (보라/핑크) */
+/* 선택된 노래 버튼 색상 (보라/핑크) */
 div[data-testid="stButton"] > button[kind="primary"] {
   background: linear-gradient(135deg, #a855f7, #ec4899) !important;
   border: none !important;
@@ -163,47 +171,50 @@ div[data-testid="stButton"] > button[kind="primary"] * {
 }
 
 /* =========================================================
-   ✅ 3. 숫자 버튼 (모바일 세로 깨짐 방지 & 완벽한 원형)
-   (중첩된 HorizontalBlock을 찾아내서 강제로 한 줄 나열)
+   ✅ 3. 숫자 버튼 간격 좁히기 (원형 유지, 간격만 축소)
    ========================================================= */
 div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] {
     display: flex !important;
-    flex-direction: row !important; /* 모바일에서도 무조건 가로로! */
+    flex-direction: row !important; 
     flex-wrap: nowrap !important;
     justify-content: center !important;
-    gap: 12px !important;
-    margin-top: 15px !important;
+    gap: 6px !important;  /* 👈 버튼 사이 간격을 12px -> 6px로 확 줄임 */
+    margin-top: 5px !important;
 }
 
+/* 컬럼 너비를 45px로 꽉 묶음 */
 div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
-    min-width: 0 !important;
-    width: auto !important;
-    flex: 0 0 auto !important;
+    min-width: 45px !important;
+    width: 45px !important;
+    max-width: 45px !important;
+    flex: 0 0 45px !important;
     padding: 0 !important;
 }
 
-/* 숫자 버튼 모양 45px X 45px 원형 강제 */
+/* 45x45 원형 숫자 버튼 */
 div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] button {
     width: 45px !important;
     height: 45px !important;
     min-height: 45px !important;
-    border-radius: 50px !important; /* 완벽한 원형 */
+    border-radius: 50% !important; /* 완벽한 원형 */
     padding: 0 !important;
     margin: 0 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    background-color: #f1f5f9 !important; /* 숫자버튼 기본 배경 */
+    border: 1px solid #cbd5e1 !important;
 }
 div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] button p {
     font-size: 1.15rem !important;
     font-weight: 800 !important;
     margin: 0 !important;
-    color: #475569 !important; /* 기본 숫자 색 */
+    color: #334155 !important; /* 기본 숫자 색 */
 }
 
-/* 🔢 숫자 버튼 선택 시 색상 (파랑/민트) - 노래 버튼과 다르게! */
+/* 숫자 버튼 선택 시 색상 (파랑/하늘색) */
 div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] button[kind="primary"] {
-    background: linear-gradient(135deg, #0ea5e9, #06b6d4) !important; /* 시원한 파란색 */
+    background: linear-gradient(135deg, #0ea5e9, #06b6d4) !important;
     border: none !important;
     box-shadow: 0 6px 15px rgba(14, 165, 233, 0.3) !important;
 }
@@ -275,7 +286,7 @@ with list_col:
         
     visible_pages = list(range(start_page, end_page))
 
-    # 숫자 버튼 (이 컬럼 안에서만 원형 디자인 적용됨)
+    # 숫자 버튼 (이 컬럼 안에서만 원형 및 간격 좁힘 디자인 적용됨)
     cols = st.columns(len(visible_pages))
     
     for idx, p in enumerate(visible_pages):
