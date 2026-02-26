@@ -20,7 +20,7 @@ SONGS = [
 ]
 
 # 상단 글귀
-HEADLINES = ["진짜 사랑해", "고마워", "옆에 있어줘", "덕분에 행복해", "안아줄게", "맛있는 거 먹자", "바다보러 갈래", "너만 있으면 돼", "보고 싶어", "만나자", "결혼해"]
+HEADLINES = ["진짜 사랑해", "고마워", "옆에 있어줘", "덕분에 행복해", "안아줄게", "맛있는 거 먹자", "바다보러 갈래?"]
 
 def yt_embed(video_id: str, title: str):
     src = f"https://www.youtube-nocookie.com/embed/{video_id}?rel=0&controls=1"
@@ -41,9 +41,13 @@ st.set_page_config(page_title="player", page_icon="🎧", layout="wide")
 st.markdown(
     """
 <style>
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-header {visibility: hidden;}
+/* ✅ Streamlit 기본 잡동사니 완벽 제거 */
+#MainMenu {visibility: hidden !important;}
+footer {visibility: hidden !important;}
+header {visibility: hidden !important;}
+.stAppDeployButton {display: none !important;}
+[data-testid="stToolbar"] {display: none !important;}
+[data-testid="stHeader"] {display: none !important;}
 
 [data-testid="stAppViewContainer"] { background: #0f1014; }
 .block-container { padding-top: 1.0rem; padding-bottom: 0.8rem; max-width: 1200px; }
@@ -101,7 +105,7 @@ header {visibility: hidden;}
   margin-bottom: 0;
 }
 
-/* 글래스모피즘 느낌 버튼 (박스 안 텍스트는 정가운데 유지) */
+/* 글래스모피즘 느낌 버튼 */
 div[data-testid="stButton"] > button {
   width: 100%;
   text-align: center;
@@ -120,7 +124,7 @@ div[data-testid="stButton"] > button {
   line-height: 1.6;
 }
 
-/* 첫 번째 줄(제목) 분리 */
+/* 첫 번째 줄 분리 */
 div[data-testid="stButton"] > button::first-line,
 div[data-testid="stButton"] > button p::first-line {
   font-size: 1.25rem;
@@ -138,7 +142,7 @@ div[data-testid="stButton"] > button[kind="secondary"]:hover {
   color: rgba(255,255,255,0.65) !important;
 }
 
-/* 선택된 버튼 하이라이트 */
+/* 선택된 버튼 하이라이트 (현재 페이지 버튼도 이 색깔 적용됨) */
 div[data-testid="stButton"] > button[kind="primary"] {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)) !important;
   border: 1px solid rgba(168, 85, 247, 0.5) !important;
@@ -153,13 +157,9 @@ div[data-testid="stButton"] > button[kind="primary"] p::first-line {
 
 div[data-testid="stButton"] > button:focus:not(:active) { border-color: inherit !important; box-shadow: inherit !important; }
 
-/* 페이지 표시 텍스트 디자인 */
-.page-indicator {
-  text-align: center;
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: rgba(255,255,255,0.7);
-  margin-top: 18px;
+/* 숫자 버튼들 간격 조절용 (여백 제거) */
+.css-1r6slb0, .css-1n76uvr {
+  gap: 0.5rem;
 }
 </style>
 """,
@@ -173,7 +173,7 @@ if "selected_id" not in st.session_state:
 if "headline" not in st.session_state:
     st.session_state.headline = random.choice(HEADLINES)
 
-# 페이지네이션용 상태 (0페이지부터 시작)
+# 페이지네이션용 상태
 if "page" not in st.session_state:
     st.session_state.page = 0
 
@@ -196,7 +196,7 @@ with player_col:
         )
 
 with list_col:
-    # 5개씩 자르기 (페이지네이션)
+    # 5개씩 자르기
     ITEMS_PER_PAGE = 5
     total_pages = math.ceil(len(SONGS) / ITEMS_PER_PAGE)
     
@@ -204,7 +204,7 @@ with list_col:
     end_idx = start_idx + ITEMS_PER_PAGE
     current_songs = SONGS[start_idx:end_idx]
 
-    # 현재 페이지의 노래 버튼 렌더링
+    # 현재 페이지 노래 목록 렌더링
     for song in current_songs:
         is_selected = (song["id"] == st.session_state.selected_id)
         btn_type = "primary" if is_selected else "secondary"
@@ -214,23 +214,17 @@ with list_col:
             st.session_state.headline = random.choice(HEADLINES)
             st.rerun()
 
-    # 이전 / 다음 페이지 버튼 영역
+    # ✅ 숫자 페이지네이션 (예: 1 2 3)
     st.markdown("<br>", unsafe_allow_html=True)
-    prev_col, page_col, next_col = st.columns([1, 1, 1])
     
-    with prev_col:
-        if st.session_state.page > 0:
-            # ✅ 화살표 지우고 영어(Prev)로 변경
-            if st.button("Prev", key="prev_btn", use_container_width=True):
-                st.session_state.page -= 1
-                st.rerun()
-                
-    with page_col:
-        st.markdown(f"<div class='page-indicator'>{st.session_state.page + 1} / {total_pages}</div>", unsafe_allow_html=True)
-        
-    with next_col:
-        if st.session_state.page < total_pages - 1:
-            # ✅ 화살표 지우고 영어(Next)로 변경
-            if st.button("Next", key="next_btn", use_container_width=True):
-                st.session_state.page += 1
+    # 숫자 버튼들이 정가운데 오도록 양옆에 빈 여백(spacer) 컬럼 배치
+    layout = [1.5] + [1] * total_pages + [1.5]
+    cols = st.columns(layout)
+    
+    for i in range(total_pages):
+        with cols[i + 1]:
+            # 현재 머물고 있는 페이지 번호는 보라색(primary)으로 하이라이트
+            btn_type = "primary" if st.session_state.page == i else "secondary"
+            if st.button(str(i + 1), key=f"page_btn_{i}", use_container_width=True, type=btn_type):
+                st.session_state.page = i
                 st.rerun()
