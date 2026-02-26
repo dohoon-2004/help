@@ -31,7 +31,7 @@ def yt_embed(video_id: str, title: str):
     </div>
     """
     # 모바일 빈 공간 방지: height 과도하게 잡지 않기
-    components.html(html, height=290)
+    components.html(html, height=200)
 
 def check_icon(is_selected: bool) -> str:
     return "✅" if is_selected else "☐"
