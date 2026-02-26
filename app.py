@@ -10,11 +10,8 @@ SONGS = [
 ]
 
 # -----------------------------
-# 유튜브/썸네일
+# 유튜브 임베드
 # -----------------------------
-def thumb_url(video_id: str) -> str:
-    return f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
-
 def yt_embed(video_id: str, title: str):
     src = f"https://www.youtube-nocookie.com/embed/{video_id}?rel=0&controls=1"
     html = f"""
@@ -33,7 +30,6 @@ def heart_icon(is_fav: bool) -> str:
     return "🩷" if is_fav else "🤍"
 
 def check_icon(is_selected: bool) -> str:
-    # ✅ = 초록 체크
     return "✅" if is_selected else "☐"
 
 # -----------------------------
@@ -54,24 +50,6 @@ h1,h2,h3 {letter-spacing:-0.3px;}
 
 div[data-testid="stVerticalBlockBorderWrapper"]{
   border-radius: 18px !important;
-}
-
-/* ✅ 썸네일: 16:9 고정 + 비율 유지(contain) */
-.thumb-wrap{
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  border-radius: 14px;
-  overflow: hidden;
-  background: #f2f3f5;
-  box-shadow: 0 6px 22px rgba(0,0,0,0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.thumb-wrap img{
-  width: 100%;
-  height: 100%;
-  object-fit: contain; /* ⭐ 비율 안 깨지고 전부 보이게 */
 }
 
 /* 유튜브 래퍼 */
@@ -96,12 +74,12 @@ div[data-testid="stVerticalBlockBorderWrapper"]{
   white-space: nowrap;
 }
 
-/* ✅ 액션 영역(체크/하트) 가운데 정렬 */
+/* 액션 영역(체크/하트) 세로 중앙 정렬 */
 .action-pad{
   display:flex;
   height: 100%;
-  align-items: center;      /* 세로 가운데 */
-  justify-content: center;  /* 가로 가운데 */
+  align-items: center;
+  justify-content: center;
 }
 </style>
 """,
@@ -131,11 +109,42 @@ if only_fav:
     visible_songs = [s for s in SONGS if s["id"] in st.session_state.favorites]
 
 # -----------------------------
-# 레이아웃
+# 레이아웃 (✅ 재생 왼쪽 / 목록 오른쪽)
 # -----------------------------
-left, right = st.columns([1.25, 1.0], gap="large")
+player_col, list_col = st.columns([1.0, 1.25], gap="large")
 
-with left:
+# ---- 왼쪽: 재생 ----
+with player_col:
+    st.markdown("### 재생")
+
+    current = next((s for s in SONGS if s["id"] == st.session_state.selected_id), None)
+    if not current:
+        st.info("오른쪽 목록에서 노래를 체크해 주세요.")
+    else:
+        is_fav = (current["id"] in st.session_state.favorites)
+
+        top1, top2 = st.columns([0.84, 0.16], gap="small")
+        with top1:
+            st.markdown(f"#### {current['title']}")
+            if current.get("artist"):
+                st.markdown(f"<div class='small-muted'>{current['artist']}</div>", unsafe_allow_html=True)
+        with top2:
+            if st.button(heart_icon(is_fav), key=f"fav_now_{current['id']}"):
+                if is_fav:
+                    st.session_state.favorites.remove(current["id"])
+                else:
+                    st.session_state.favorites.add(current["id"])
+                st.rerun()
+
+        yt_embed(current["videoId"], current["title"])
+        st.link_button(
+            "YouTube에서 열기",
+            f"https://www.youtube.com/watch?v={current['videoId']}",
+            use_container_width=True,
+        )
+
+# ---- 오른쪽: 목록 ----
+with list_col:
     st.markdown("### 목록")
 
     if not visible_songs:
@@ -146,27 +155,16 @@ with left:
             is_fav = (song["id"] in st.session_state.favorites)
 
             with st.container(border=True):
-                c1, c2, c3 = st.columns([0.40, 0.44, 0.16], gap="medium")
+                c1, c2 = st.columns([0.78, 0.22], gap="medium")
 
+                # 텍스트 정보(썸네일 제거)
                 with c1:
-                    st.markdown(
-                        f"""
-                        <div class="thumb-wrap">
-                          <img src="{thumb_url(song['videoId'])}" />
-                        </div>
-                        """,
-                        unsafe_allow_html=True,
-                    )
-
-                with c2:
                     st.markdown(f"**{song['title']}**")
                     if song.get("artist"):
                         st.markdown(f"<div class='small-muted'>{song['artist']}</div>", unsafe_allow_html=True)
-                    if is_selected:
-                        st.caption("체크됨")
 
-                with c3:
-                    # ✅ 버튼을 카드 높이 가운데에 위치시키기
+                # 버튼(체크/하트) - 가운데 정렬 느낌
+                with c2:
                     st.markdown("<div class='action-pad'>", unsafe_allow_html=True)
                     b1, b2 = st.columns([1, 1], gap="small")
                     with b1:
@@ -181,29 +179,3 @@ with left:
                                 st.session_state.favorites.add(song["id"])
                             st.rerun()
                     st.markdown("</div>", unsafe_allow_html=True)
-
-with right:
-    st.markdown("### 재생")
-
-    current = next((s for s in SONGS if s["id"] == st.session_state.selected_id), None)
-    if not current:
-        st.info("왼쪽에서 노래를 체크해 주세요.")
-    else:
-        is_fav = (current["id"] in st.session_state.favorites)
-
-        top1, top2 = st.columns([0.84, 0.16], gap="small")
-        with top1:
-            st.markdown(f"#### {current['title']}")
-            if current.get("artist"):
-                st.markdown(f"<div class='small-muted'>{current['artist']}</div>", unsafe_allow_html=True)
-
-        with top2:
-            if st.button(heart_icon(is_fav), key=f"fav_now_{current['id']}"):
-                if is_fav:
-                    st.session_state.favorites.remove(current["id"])
-                else:
-                    st.session_state.favorites.add(current["id"])
-                st.rerun()
-
-        yt_embed(current["videoId"], current["title"])
-        st.link_button("YouTube에서 열기", f"https://www.youtube.com/watch?v={current['videoId']}", use_container_width=True)
