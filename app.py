@@ -53,7 +53,7 @@ header {visibility: hidden;}
 /* ✅ 상단 글귀 사이즈 (font-size 값을 원하시는 대로 조절하세요) */
 .headline{
   font-size: 2.2rem; 
-  font-weight: 900;
+  font-weight: 600;
   letter-spacing: -0.6px;
   margin-top: 0.7rem;
   margin-bottom: 0.9rem;
@@ -86,8 +86,8 @@ header {visibility: hidden;}
   color: rgba(255,255,255,0.92);
 }
 .song-artist{
-  font-size: 1.60rem;
-  font-weight: 900;
+  font-size: 1.40rem;
+  font-weight: 500;
   letter-spacing: -0.4px;
   margin-top: 0.08rem;
   position: relative;
