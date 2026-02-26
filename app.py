@@ -5,9 +5,7 @@ import streamlit.components.v1 as components
 # 1) 노래 목록(여기에만 추가/수정)
 # -----------------------------
 SONGS = [
-    {"id": "weightless", "title": "Weightless", "artist": "Marconi Union", "videoId": "UfcAVejslrU"},
-    {"id": "example2", "title": "Never Gonna Give You Up", "artist": "Rick Astley", "videoId": "dQw4w9WgXcQ"},
-    # {"id": "new", "title": "노래제목", "artist": "가수", "videoId": "유튜브_VIDEO_ID"},
+    {"id": "river-flows-in-you", "title": "River Flows in You", "artist": "Yiruma", "videoId": ""},
 ]
 
 # -----------------------------
