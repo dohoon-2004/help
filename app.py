@@ -8,12 +8,14 @@ import streamlit.components.v1 as components
 SONGS = [
     {"id": "river-flows-in-you", "title": "River Flows in You", "artist": "Yiruma", "videoId": "7maJOI3QMu0"},
     {"id": "its-time", "title": "It's Time", "artist": "Imagine Dragons", "videoId": "NASqUELHjPE"},
+    {"id": "iu-night-letter", "title": "밤편지", "artist": "아이유(IU)", "videoId": "EjMTw4xLcBI"},
+    {"id": "stronger", "title": "Stronger (What Doesn't Kill You)", "artist": "Kelly Clarkson", "videoId": "Xn676-fLq7I"},
 ]
 
 # -----------------------------
 # 상단 글귀(짧게)
 # -----------------------------
-HEADLINES = ["사랑해", "고마워", "옆에 있어줘", "덕분에 행복해"]
+HEADLINES = ["진짜 사랑해", "고마워", "옆에 있어줘", "덕분에 행복해"]
 
 # -----------------------------
 # 유튜브 임베드
@@ -76,7 +78,7 @@ header {visibility: hidden;}
 /* ✅ 플레이어 바로 아래 텍스트 (위로 끌어올림) */
 .song-title{
   font-size: 1.45rem;
-  font-weight: 900;
+  font-weight: 600;
   letter-spacing: -0.4px;
   margin-top: -1.0rem;    /* 높이를 190으로 맞췄으므로 이 정도 음수면 딱 맞습니다 */
   position: relative; 
