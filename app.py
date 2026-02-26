@@ -310,7 +310,7 @@ with list_col:
 
     # ✅ "pages" 글씨는 label_visibility="collapsed" 옵션으로 HTML 렌더링 자체를 막았습니다.
     chosen = st.radio(
-        label="pagination",
+        label="",
         options=labels,
         index=labels.index(current_label) if labels else 0,
         horizontal=True,
