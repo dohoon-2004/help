@@ -52,7 +52,7 @@ if st.session_state.get("scroll_to_top"):
 # -----------------------------
 # CSS (확실히 먹는 방식으로 재구성)
 # - 노래 목록: st.button (핑크/보라)
-# - 페이지네이션: st.radio horizontal (파랑/하늘) + 원형
+# - 페이지네이션: 크기 증가 및 완벽한 가운데 정렬
 # -----------------------------
 st.markdown(
     """
@@ -125,7 +125,6 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
 .song-artist{ font-size: 1.40rem; font-weight: 600; color: var(--muted); margin:0.2rem 0 0 0; }
 
 /* ---------- song list button (st.button) ---------- */
-/* 노래 목록이 들어있는 컬럼에만 적용하고 싶어서 wrapper 클래스 사용 */
 .songlist div[data-testid="stButton"] > button{
   width: 100%;
   text-align: center;
@@ -158,64 +157,80 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
 }
 
 /* ---------- pager (st.radio horizontal) ---------- */
-.pager { margin-top: 10px; }
-.pager [role="radiogroup"]{
-  display:flex !important;
-  gap: 6px !important;               /* ✅ 간격 */
+/* 라디오 버튼 전체 컨테이너 가운데 정렬 */
+div[data-testid="stRadio"] {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  margin-top: 15px !important;
+}
+
+div[data-testid="stRadio"] [role="radiogroup"] {
+  display: flex !important;
+  gap: 12px !important;
   justify-content: center !important;
   flex-wrap: nowrap !important;
 }
 
-/* 라디오 항목을 원형 버튼처럼 */
-.pager label{
+div[data-testid="stRadio"] label {
   margin: 0 !important;
+  position: relative !important; 
+  cursor: pointer !important;
 }
-.pager label > div{
-  /* 라디오 기본 여백 제거 */
+
+div[data-testid="stRadio"] label > div {
   padding: 0 !important;
   margin: 0 !important;
 }
 
-/* 실제 동그라미 버튼 모양 */
-.pager input[type="radio"]{
+/* 실제 동그라미 버튼 모양 및 사이즈 업 */
+div[data-testid="stRadio"] input[type="radio"] {
   appearance: none !important;
   -webkit-appearance: none !important;
-  width: 42px !important;
-  height: 42px !important;
+  width: 52px !important;
+  height: 52px !important;
   border-radius: 999px !important;
   border: 1px solid var(--border) !important;
   background: var(--card) !important;
   display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
   box-sizing: border-box !important;
   cursor: pointer !important;
-  position: relative !important;
+  margin: 0 !important;
 }
 
-/* 숫자 텍스트 */
-.pager label span{
-  position: relative !important;
-  left: -32px !important;     /* input 위에 숫자를 겹치게 */
+/* 숫자 텍스트 완벽한 가운데 정렬 */
+div[data-testid="stRadio"] label p,
+div[data-testid="stRadio"] label span {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
   pointer-events: none !important;
   font-weight: 850 !important;
+  font-size: 1.15rem !important;
   color: var(--text) !important;
+  margin: 0 !important;
 }
 
-/* 선택된 페이지: 파랑/하늘 그라데이션 (노래 버튼과 다름) */
-.pager input[type="radio"]:checked{
+/* 선택된 페이지 그라데이션 */
+div[data-testid="stRadio"] input[type="radio"]:checked {
   background: var(--page-grad) !important;
   border: none !important;
   box-shadow: 0 8px 18px rgba(14,165,233,0.25) !important;
 }
-.pager input[type="radio"]:checked + div span,
-.pager input[type="radio"]:checked ~ span{
+
+/* 선택된 텍스트 색상 변경 */
+div[data-testid="stRadio"] input[type="radio"]:checked + div p,
+div[data-testid="stRadio"] input[type="radio"]:checked + div span,
+div[data-testid="stRadio"] input[type="radio"]:checked ~ p,
+div[data-testid="stRadio"] input[type="radio"]:checked ~ span {
   color: #ffffff !important;
 }
 
-/* 모바일에서 라디오가 세로로 떨어지는 것 방지 */
+/* 모바일 간격 유지 */
 @media (max-width: 520px){
-  .pager [role="radiogroup"]{ gap: 6px !important; }
+  div[data-testid="stRadio"] [role="radiogroup"] { gap: 8px !important; }
 }
 </style>
 """,
