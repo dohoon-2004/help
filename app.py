@@ -53,7 +53,7 @@ header {visibility: hidden;}
 /* ✅ 상단 글귀 사이즈 (font-size 값을 원하시는 대로 조절하세요) */
 .headline{
   font-size: 2.2rem; 
-  font-weight: 600;
+  font-weight: 800;
   letter-spacing: -0.6px;
   margin-top: 0.7rem;
   margin-bottom: 0.9rem;
@@ -78,7 +78,7 @@ header {visibility: hidden;}
 /* ✅ 플레이어 바로 아래 텍스트 (위로 끌어올림) */
 .song-title{
   font-size: 1.45rem;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.4px;
   margin-top: -1.0rem;    /* 높이를 190으로 맞췄으므로 이 정도 음수면 딱 맞습니다 */
   position: relative; 
@@ -87,7 +87,7 @@ header {visibility: hidden;}
 }
 .song-artist{
   font-size: 1.40rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: -0.4px;
   margin-top: 0.08rem;
   position: relative;
