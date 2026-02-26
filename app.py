@@ -18,7 +18,6 @@ BASE_SONGS = [
     {"id": "akmu-200-percent", "title": "200%", "artist": "AKMU", "videoId": "0Oi8jDMvd_w"},
     {"id": "bol4-hug", "title": "Hug", "artist": "볼빨간사춘기", "videoId": "qfeoX17dav0"},
 ]
-# 최대 5개 표시 테스트용 복사
 SONGS = []
 for i in range(3):
     for song in BASE_SONGS:
@@ -55,8 +54,12 @@ if "scroll_to_top" in st.session_state and st.session_state.scroll_to_top:
 st.markdown(
     """
 <style>
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v3.2.1/dist/web/static/pretendard.css");
+/* ✅ 다크 모드 강제 차단! 무조건 라이트 모드로 인식하게 만듦 */
+:root {
+  color-scheme: light only !important;
+}
 
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v3.2.1/dist/web/static/pretendard.css");
 * {
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;
 }
@@ -68,10 +71,10 @@ header {visibility: hidden !important;}
 [data-testid="stToolbar"] {display: none !important;}
 [data-testid="stHeader"] {display: none !important;}
 
-/* ✅ 모바일 강제 다크모드 방어: 확실한 밝은 배경 */
-.stApp, [data-testid="stAppViewContainer"] { 
-  background-color: #fdfbfb !important;
-  background-image: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%) !important; 
+/* ✅ 아주 뽀얗고 예쁜 라이트 배경 강제 적용 */
+.stApp, [data-testid="stAppViewContainer"], .block-container { 
+  background-color: #f8fafc !important;
+  background-image: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important; 
 }
 .block-container { padding-top: 1.0rem; padding-bottom: 0.8rem; max-width: 1200px; }
 
@@ -82,7 +85,7 @@ header {visibility: hidden !important;}
   letter-spacing: -0.6px;
   margin-top: 0.7rem;
   margin-bottom: 0.9rem;
-  color: #111827 !important;
+  color: #0f172a !important; /* 진한 남색/검정 */
 }
 
 /* 플레이어 */
@@ -114,7 +117,7 @@ header {visibility: hidden !important;}
   font-size: 1.65rem;
   font-weight: 800;
   letter-spacing: -0.4px;
-  color: #111827 !important;
+  color: #0f172a !important;
   text-align: left;
   margin: 0;
 }
@@ -123,21 +126,21 @@ header {visibility: hidden !important;}
   font-weight: 600;
   letter-spacing: -0.4px;
   margin-top: 0.2rem;
-  color: #4b5563 !important;
+  color: #64748b !important;
   text-align: left;
   margin-bottom: 0;
 }
 
-/* 목록 버튼 공통 */
+/* ✅ 곡 목록 버튼 (깨끗한 화이트 톤으로 다크모드 무시) */
 div[data-testid="stButton"] > button {
   width: 100%;
   text-align: center;
   border-radius: 16px;
   padding: 18px 22px;
-  background: rgba(255, 255, 255, 0.85) !important;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.04) !important;
   white-space: pre-wrap; 
   transition: all 0.2s; 
   
@@ -151,66 +154,68 @@ div[data-testid="stButton"] > button::first-line,
 div[data-testid="stButton"] > button p::first-line {
   font-size: 1.25rem;
   font-weight: 800;
-  color: #0f172a !important;
+  color: #1e293b !important;
   line-height: 1.4;
 }
 
 div[data-testid="stButton"] > button[kind="secondary"]:hover {
-  background: rgba(255, 255, 255, 1) !important;
-  border-color: rgba(0, 0, 0, 0.15) !important;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08) !important;
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08) !important;
 }
 
-/* 선택된 버튼 하이라이트 */
+/* 선택된 곡/페이지 버튼 (그라데이션 포인트) */
 div[data-testid="stButton"] > button[kind="primary"] {
-  background: linear-gradient(135deg, #6366f1, #a855f7) !important;
+  background-color: #8b5cf6 !important;
+  background-image: linear-gradient(135deg, #6366f1, #a855f7) !important;
   border: none !important;
-  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.3) !important;
+  box-shadow: 0 6px 15px rgba(139, 92, 246, 0.35) !important;
   transform: translateY(0px) !important; 
 }
 div[data-testid="stButton"] > button[kind="primary"]::first-line,
-div[data-testid="stButton"] > button[kind="primary"] p::first-line {
+div[data-testid="stButton"] > button[kind="primary"] p::first-line,
+div[data-testid="stButton"] > button[kind="primary"] {
   color: #ffffff !important;
 }
-div[data-testid="stButton"] > button[kind="primary"] {
-  color: rgba(255,255,255,0.85) !important;
-}
+
 div[data-testid="stButton"] > button:focus:not(:active) { border-color: inherit !important; box-shadow: inherit !important; }
 
 /* =========================================================
-   ✅ 모바일 호환 100%: 이중 구조를 이용한 페이지 버튼 타겟팅
-   (최신 CSS가 무시되는 모바일에서도 절대 안 깨집니다)
+   ✅ 여백 완전 제거! 숫자 버튼 픽셀 단위로 강제 고정
    ========================================================= */
-div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] {
+.page-numbers-row + div[data-testid="stHorizontalBlock"] {
+    display: flex !important;
     flex-direction: row !important;
     flex-wrap: nowrap !important;
-    gap: 8px !important;
     justify-content: center !important;
+    gap: 10px !important;  /* 👈 버튼 사이 간격 딱 이만큼만 허용 */
     margin-top: 15px !important;
-    width: 100% !important;
 }
-div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
-    min-width: unset !important;
-    width: auto !important;
-    flex: 0 0 auto !important;
+
+/* 쓸데없이 넓어지는 컬럼(여백) 크기를 45px로 꽉 묶어버림 */
+.page-numbers-row + div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+    min-width: 45px !important;
+    max-width: 45px !important;
+    width: 45px !important;
+    flex: 0 0 45px !important;
     padding: 0 !important;
 }
-/* 숫자 버튼 동그라미 강제 */
-div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] button {
+
+/* 숫자 버튼 자체도 45x45 완벽한 동그라미로 고정 */
+.page-numbers-row + div[data-testid="stHorizontalBlock"] button {
+    width: 45px !important;
+    height: 45px !important;
+    border-radius: 50% !important; 
     padding: 0 !important;
-    border-radius: 50% !important; /* 완벽한 원형 */
-    width: 3.0rem !important;      /* 고정 크기 */
-    height: 3.0rem !important;
-    font-size: 1.15rem !important;
-    font-weight: 800 !important;
+    margin: 0 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
-    white-space: nowrap !important;
+    font-size: 1.15rem !important;
+    font-weight: 800 !important;
 }
-div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] button::first-line,
-div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] button p::first-line {
+.page-numbers-row + div[data-testid="stHorizontalBlock"] button::first-line {
     font-size: 1.15rem !important;
 }
 </style>
@@ -278,7 +283,9 @@ with list_col:
         
     visible_pages = list(range(start_page, end_page))
 
-    # 모바일에서도 완벽 호환되는 중첩 st.columns 로직
+    # ✅ 숫자 버튼 사이의 여백을 완벽 통제하기 위한 마커
+    st.markdown('<div class="page-numbers-row"></div>', unsafe_allow_html=True)
+    
     cols = st.columns(len(visible_pages))
     
     for idx, p in enumerate(visible_pages):
