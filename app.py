@@ -10,9 +10,14 @@ SONGS = [
     {"id": "its-time", "title": "It's Time", "artist": "Imagine Dragons", "videoId": "NASqUELHjPE"},
 ]
 
-# 상단 문구
+# -----------------------------
+# 상단 글귀(짧게)
+# -----------------------------
 HEADLINES = ["사랑해", "고마워", "옆에 있어줘", "덕분에 행복해"]
 
+# -----------------------------
+# 유튜브 임베드
+# -----------------------------
 def yt_embed(video_id: str, title: str):
     src = f"https://www.youtube-nocookie.com/embed/{video_id}?rel=0&controls=1"
     html = f"""
@@ -25,12 +30,8 @@ def yt_embed(video_id: str, title: str):
       ></iframe>
     </div>
     """
-    # ✅ 모바일 빈 공간 제거 핵심: height를 과하게 크게 잡지 않기
-    # (가로폭이 줄면 실제 16:9 높이는 더 작아지므로, 400 같은 값은 빈 공간을 만듭니다)
-    components.html(html, height=270)
-
-def heart_icon(is_fav: bool) -> str:
-    return "🩷" if is_fav else "🤍"
+    # 모바일 빈 공간 방지: height 과도하게 잡지 않기
+    components.html(html, height=290)
 
 def check_icon(is_selected: bool) -> str:
     return "✅" if is_selected else "☐"
@@ -45,15 +46,15 @@ footer {visibility: hidden;}
 header {visibility: hidden;}
 
 [data-testid="stAppViewContainer"] { background: #0f1014; }
-.block-container { padding-top: 1.1rem; padding-bottom: 0.8rem; max-width: 1200px; }
-div[data-testid="stVerticalBlock"]{ gap: 0.2rem; }
+.block-container { padding-top: 1.0rem; padding-bottom: 0.8rem; max-width: 1200px; }
 
-/* 상단 문구 */
+/* 상단 글귀: 위/아래 여백 */
 .headline{
   font-size: 2.0rem;
   font-weight: 900;
   letter-spacing: -0.6px;
-  margin: 0.2rem 0 0.5rem 0;
+  margin-top: 0.7rem;      /* ✅ 위 여백 */
+  margin-bottom: 0.9rem;   /* ✅ 아래 여백 */
   color: rgba(255,255,255,0.92);
 }
 
@@ -72,34 +73,60 @@ div[data-testid="stVerticalBlock"]{ gap: 0.2rem; }
   border: 0;
 }
 
-/* 플레이어 아래 텍스트 */
+/* 플레이어 바로 아래 텍스트 */
 .song-title{
-  font-size: 1.6rem;
+  font-size: 1.45rem;
   font-weight: 900;
   letter-spacing: -0.4px;
-  margin-top: 0.55rem;
+  margin-top: 0.50rem;   /* ✅ 플레이어 바로 밑 */
   color: rgba(255,255,255,0.92);
 }
 .song-artist{
-  font-size: 1.9rem;         /* ✅ 가수 이름 더 크게 */
+  font-size: 1.60rem;
   font-weight: 900;
   letter-spacing: -0.4px;
-  margin-top: 0.05rem;
+  margin-top: 0.08rem;
   color: rgba(255,255,255,0.70);
 }
 
-/* 버튼 */
-.stButton button{
-  border-radius: 14px;
-  padding: 0.60rem 0.85rem;
-  white-space: nowrap;
+/* 목록 줄(모바일에서도 오른쪽에 체크 고정) */
+.list-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;   /* ✅ 오른쪽 끝으로 밀기 */
+  gap: 12px;
+  padding: 14px 14px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
+  margin-bottom: 12px;
+}
+.list-text{
+  min-width: 0; /* 줄바꿈/잘림 처리 위해 필요 */
+}
+.list-title{
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: rgba(255,255,255,0.92);
+  line-height: 1.2;
+}
+.list-artist{
+  font-size: 1.10rem;
+  font-weight: 850;
+  color: rgba(255,255,255,0.65);
+  margin-top: 4px;
+  line-height: 1.2;
 }
 
-/* (선택) 카드 느낌 */
-div[data-testid="stVerticalBlockBorderWrapper"]{
-  border-radius: 18px !important;
-  background: rgba(255,255,255,0.04) !important;
-  border: 1px solid rgba(255,255,255,0.08) !important;
+/* 체크 버튼(오른쪽) */
+.check-wrap{
+  flex: 0 0 auto;
+}
+.stButton button{
+  border-radius: 14px;
+  padding: 0.60rem 0.90rem;
+  white-space: nowrap;
 }
 </style>
 """,
@@ -109,62 +136,49 @@ div[data-testid="stVerticalBlockBorderWrapper"]{
 # 상태
 if "selected_id" not in st.session_state:
     st.session_state.selected_id = SONGS[0]["id"] if SONGS else None
-if "favorites" not in st.session_state:
-    st.session_state.favorites = set()
+
+# 상단 글귀(세션마다 1개 고정)
 if "headline" not in st.session_state:
     st.session_state.headline = random.choice(HEADLINES)
 
-# 상단 문구
 st.markdown(f"<div class='headline'>{st.session_state.headline}</div>", unsafe_allow_html=True)
 
-# ✅ 모바일에서는 columns가 세로로 쌓입니다(정상)
+# 레이아웃: 모바일에서는 자동으로 세로로 쌓입니다(재생 위, 목록 아래)
 player_col, list_col = st.columns([1.08, 1.0], gap="large")
 
 with player_col:
     current = next((s for s in SONGS if s["id"] == st.session_state.selected_id), None)
     if current:
-        is_fav = current["id"] in st.session_state.favorites
-
-        # ✅ 플레이어 폭을 100%로 만들기 위해:
-        # 하트 버튼을 "플레이어 위 오른쪽"으로 빼서, 플레이어를 옆에서 안 깎습니다.
-        top_l, top_r = st.columns([0.80, 0.20])
-        with top_l:
-            st.write("")  # 자리만
-        with top_r:
-            if st.button(heart_icon(is_fav), key=f"fav_now_{current['id']}", use_container_width=True):
-                if is_fav:
-                    st.session_state.favorites.remove(current["id"])
-                else:
-                    st.session_state.favorites.add(current["id"])
-                st.rerun()
-
         yt_embed(current["videoId"], current["title"])
-
-        # ✅ 플레이어 아래: 왼쪽 정렬 제목/가수
+        # ✅ 플레이어 바로 밑에 제목/가수
         st.markdown(f"<div class='song-title'>{current['title']}</div>", unsafe_allow_html=True)
-        st.markdown(f"<div class='song-artist'>{current.get('artist','')}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='song-artist'>{current['artist']}</div>", unsafe_allow_html=True)
 
 with list_col:
-    # 지금은 곡 1개라 단순 목록(원하시면 나중에 여러 곡 확장)
+    # ✅ 목록: HTML로 줄을 만들고, 체크 버튼은 오른쪽 끝에 고정
     for song in SONGS:
-        is_selected = song["id"] == st.session_state.selected_id
-        is_fav = song["id"] in st.session_state.favorites
+        is_selected = (song["id"] == st.session_state.selected_id)
 
-        with st.container(border=True):
-            c1, c2 = st.columns([0.72, 0.28], gap="small")
-            with c1:
-                st.markdown(f"<div style='color:rgba(255,255,255,0.92);font-weight:900;font-size:1.05rem'>{song['title']}</div>", unsafe_allow_html=True)
-                st.markdown(f"<div style='color:rgba(255,255,255,0.65);font-weight:800;font-size:1.10rem;margin-top:0.1rem'>{song['artist']}</div>", unsafe_allow_html=True)
-            with c2:
-                b1, b2 = st.columns([1, 1], gap="small")
-                with b1:
-                    if st.button(check_icon(is_selected), key=f"pick_{song['id']}", use_container_width=True):
-                        st.session_state.selected_id = song["id"]
-                        st.rerun()
-                with b2:
-                    if st.button(heart_icon(is_fav), key=f"fav_{song['id']}", use_container_width=True):
-                        if is_fav:
-                            st.session_state.favorites.remove(song["id"])
-                        else:
-                            st.session_state.favorites.add(song["id"])
-                        st.rerun()
+        st.markdown(
+            f"""
+            <div class="list-row">
+              <div class="list-text">
+                <div class="list-title">{song['title']}</div>
+                <div class="list-artist">{song['artist']}</div>
+              </div>
+              <div class="check-wrap" id="check_{song['id']}"></div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        # 버튼은 Streamlit 컴포넌트라 HTML 안에 직접 넣기 어렵습니다.
+        # 대신 "바로 아래"에 두되, wide + padding으로 오른쪽에 붙어 보이도록 처리합니다.
+        # (가장 안정적으로 모바일에서도 오른쪽 정렬됩니다.)
+        btn_col_l, btn_col_r = st.columns([0.82, 0.18])
+        with btn_col_l:
+            st.write("")
+        with btn_col_r:
+            if st.button(check_icon(is_selected), key=f"pick_{song['id']}", use_container_width=True):
+                st.session_state.selected_id = song["id"]
+                st.rerun()
