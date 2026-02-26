@@ -5,7 +5,8 @@ import streamlit.components.v1 as components
 # 1) 노래 목록(여기에만 추가/수정)
 # -----------------------------
 SONGS = [
-    {"id": "river-flows-in-you", "title": "River Flows in You", "artist": "Yiruma", "videoId": "https://www.youtube.com/watch?v=7maJOI3QMu0&list=RD7maJOI3QMu0&start_radio=1"},
+    {"id": "weightless", "title": "Weightless", "artist": "Marconi Union", "videoId": "UfcAVejslrU"},
+    {"id": "example2", "title": "Never Gonna Give You Up", "artist": "Rick Astley", "videoId": "dQw4w9WgXcQ"},
 ]
 
 # -----------------------------
@@ -28,10 +29,14 @@ def yt_embed(video_id: str, title: str):
     """
     components.html(html, height=420)
 
+def heart_icon(is_fav: bool) -> str:
+    # ✅ 핑크 하트(즐겨찾기) / 흰 하트(미즐겨찾기)
+    return "🩷" if is_fav else "🤍"
+
 # -----------------------------
 # 3) 페이지 설정 + 스타일
 # -----------------------------
-st.set_page_config(page_title="노래 재생", page_icon="🎧", layout="wide")
+st.set_page_config(page_title="노래", page_icon="🎧", layout="wide")
 
 st.markdown(
     """
@@ -48,7 +53,7 @@ div[data-testid="stVerticalBlockBorderWrapper"]{
   border-radius: 18px !important;
 }
 
-/* 가로형 썸네일(고정 비율 + 크롭) */
+/* 썸네일(16:9 고정 + cover) */
 .thumb{
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -74,11 +79,11 @@ div[data-testid="stVerticalBlockBorderWrapper"]{
   border:0;
 }
 
-/* 버튼 */
+/* 버튼 글자 줄바꿈 방지 */
 .stButton button{
   border-radius: 12px;
   padding: 0.55rem 0.85rem;
-  white-space: nowrap; /* 버튼 글자 줄바꿈 방지 */
+  white-space: nowrap;
 }
 </style>
 """,
@@ -101,7 +106,7 @@ st.markdown("## 🎧 노래")
 
 with st.sidebar:
     st.markdown("### 옵션")
-    only_fav = st.checkbox("★ 즐겨찾기만 보기", value=False)
+    only_fav = st.checkbox("🩷 즐겨찾기만 보기", value=False)
 
 visible_songs = SONGS
 if only_fav:
@@ -110,7 +115,7 @@ if only_fav:
 # -----------------------------
 # 6) 레이아웃
 # -----------------------------
-left, right = st.columns([1.2, 1.0], gap="large")
+left, right = st.columns([1.25, 1.0], gap="large")
 
 with left:
     st.markdown("### 목록")
@@ -118,23 +123,19 @@ with left:
     if not visible_songs:
         st.info("표시할 노래가 없습니다.")
     else:
-        # ✅ 가로형 리스트(한 곡 = 한 줄)
         for song in visible_songs:
             is_selected = (song["id"] == st.session_state.selected_id)
             is_fav = (song["id"] in st.session_state.favorites)
-            fav_icon = "★" if is_fav else "☆"
 
             with st.container(border=True):
-                c1, c2, c3 = st.columns([0.42, 0.43, 0.15], gap="medium")
+                c1, c2, c3 = st.columns([0.40, 0.42, 0.18], gap="medium")
 
-                # 썸네일(고정 비율)
                 with c1:
                     st.markdown(
                         f"<div class='thumb' style=\"background-image:url('{thumb_url(song['videoId'])}')\"></div>",
                         unsafe_allow_html=True,
                     )
 
-                # 제목/아티스트
                 with c2:
                     st.markdown(f"**{song['title']}**")
                     if song.get("artist"):
@@ -142,15 +143,17 @@ with left:
                     if is_selected:
                         st.caption("현재 선택됨")
 
-                # 버튼(가로)
                 with c3:
-                    b1, b2 = st.columns(2, gap="small")
-                    with b1:
+                    # ✅ 선택 버튼 넓게 / 하트 버튼 작게
+                    b_pick, b_fav = st.columns([0.72, 0.28], gap="small")
+
+                    with b_pick:
                         if st.button("선택", key=f"pick_{song['id']}", use_container_width=True):
                             st.session_state.selected_id = song["id"]
                             st.rerun()
-                    with b2:
-                        if st.button(fav_icon, key=f"fav_{song['id']}", use_container_width=True):
+
+                    with b_fav:
+                        if st.button(heart_icon(is_fav), key=f"fav_{song['id']}", use_container_width=True):
                             if is_fav:
                                 st.session_state.favorites.remove(song["id"])
                             else:
@@ -164,16 +167,17 @@ with right:
     if not current:
         st.info("왼쪽에서 노래를 선택해 주세요.")
     else:
-        is_fav = current["id"] in st.session_state.favorites
-        star_label = "★ 즐겨찾기 해제" if is_fav else "☆ 즐겨찾기"
+        is_fav = (current["id"] in st.session_state.favorites)
 
-        top1, top2 = st.columns([1.2, 1.0])
+        # ✅ 재생 쪽 즐겨찾기 버튼: 크게 안 보이게 아이콘만(작게)
+        top1, top2 = st.columns([0.82, 0.18], gap="small")
         with top1:
             st.markdown(f"#### {current['title']}")
             if current.get("artist"):
                 st.markdown(f"<div class='small-muted'>{current['artist']}</div>", unsafe_allow_html=True)
+
         with top2:
-            if st.button(star_label, use_container_width=True):
+            if st.button(heart_icon(is_fav), key=f"fav_now_{current['id']}"):
                 if is_fav:
                     st.session_state.favorites.remove(current["id"])
                 else:
