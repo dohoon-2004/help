@@ -60,42 +60,54 @@ st.markdown(
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;
 }
 
-#MainMenu {visibility: hidden !important;}
-footer {visibility: hidden !important;}
-header {visibility: hidden !important;}
-.stAppDeployButton {display: none !important;}
-[data-testid="stToolbar"] {display: none !important;}
-[data-testid="stHeader"] {display: none !important;}
-
-/* =========================================================
-   ✅ 1. 배경색 강제 화이트 (뿌리부터 전부 하얗게 도배)
-   ========================================================= */
-html, body, .stApp, [data-testid="stAppViewContainer"], .block-container { 
-  background-color: #ffffff !important; 
-  background-image: none !important;
-}
-
-/* 모든 텍스트 기본색 블랙 강제 */
-p, span, div, h1, h2, h3 {
-  color: #000000 !important; 
+#MainMenu, footer, header, .stAppDeployButton, [data-testid="stToolbar"], [data-testid="stHeader"] { 
+  display: none !important; 
 }
 
 /* =========================================================
-   ✅ 2. 상단 여백 대폭 축소 (글귀 위아래 여백 다이어트)
+   ✅ 1. 다크/라이트 모드 자동 대응 (CSS 변수 활용)
    ========================================================= */
+:root{
+  --bg: #ffffff;
+  --card: #f8fafc;
+  --border: #e2e8f0;
+  --text: #0f172a;
+  --muted: #475569;
+  --shadow: 0 12px 34px rgba(0,0,0,0.12);
+}
+
+/* 시스템/브라우저 다크모드면 자동으로 다크 팔레트 적용 */
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg: #0f1014;
+    --card: rgba(255,255,255,0.06);
+    --border: rgba(255,255,255,0.14);
+    --text: rgba(255,255,255,0.92);
+    --muted: rgba(255,255,255,0.65);
+    --shadow: 0 12px 34px rgba(0,0,0,0.25);
+  }
+}
+
+/* 앱 전체 배경 */
+html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
+  background: var(--bg) !important;
+}
+
+/* 상단 여백 축소 */
 .block-container { 
-  padding-top: 0.2rem !important;  /* 👈 맨 위 여백 확 줄임 */
+  padding-top: 0.2rem !important;  
   padding-bottom: 0.8rem; 
   max-width: 1200px; 
 }
 
-.headline {
+/* 텍스트 색상 변수 적용 */
+.headline{ 
   font-size: 2.2rem; 
   font-weight: 900;
   letter-spacing: -0.6px;
-  margin-top: 0.2rem !important;    /* 👈 글귀 위 여백 줄임 */
-  margin-bottom: 0.4rem !important; /* 👈 글귀 아래 여백 줄임 */
-  color: #0f172a !important; 
+  margin-top: 0.2rem !important;    
+  margin-bottom: 0.4rem !important; 
+  color: var(--text) !important; 
 }
 
 /* 플레이어 */
@@ -105,7 +117,7 @@ p, span, div, h1, h2, h3 {
   border-radius: 18px;
   overflow: hidden;
   background: #000;
-  box-shadow: 0 12px 34px rgba(0,0,0,0.15);
+  box-shadow: var(--shadow) !important; 
 }
 .yt-wrap iframe{
   position: absolute; inset: 0;
@@ -125,25 +137,27 @@ p, span, div, h1, h2, h3 {
 .song-title{
   font-size: 1.65rem !important;
   font-weight: 800 !important;
-  color: #0f172a !important;
+  color: var(--text) !important;
+  margin: 0;
 }
 .song-artist{
   font-size: 1.40rem !important;
   font-weight: 600 !important;
   margin-top: 0.2rem;
-  color: #475569 !important;
+  color: var(--muted) !important;
+  margin-bottom: 0;
 }
 
 /* =========================================================
-   ✅ 노래 목록 버튼 (화이트 톤 & 핑크 포인트)
+   ✅ 2. 노래 목록 버튼 (카드 변수 적용)
    ========================================================= */
 div[data-testid="stButton"] > button {
   width: 100%;
   text-align: center;
   border-radius: 16px !important;
   padding: 16px 20px !important;
-  background-color: #f8fafc !important;
-  border: 1px solid #e2e8f0 !important;
+  background-color: var(--card) !important;
+  border: 1px solid var(--border) !important;
   box-shadow: 0 4px 10px rgba(0,0,0,0.03) !important;
   white-space: pre-wrap; 
   transition: all 0.2s; 
@@ -151,13 +165,13 @@ div[data-testid="stButton"] > button {
   font-weight: 600;
 }
 div[data-testid="stButton"] > button p {
-  color: #64748b !important;
+  color: var(--muted) !important;
 }
 div[data-testid="stButton"] > button::first-line,
 div[data-testid="stButton"] > button p::first-line {
   font-size: 1.25rem !important;
   font-weight: 800 !important;
-  color: #0f172a !important;
+  color: var(--text) !important;
 }
 
 /* 선택된 노래 버튼 색상 (보라/핑크) */
@@ -171,55 +185,50 @@ div[data-testid="stButton"] > button[kind="primary"] * {
 }
 
 /* =========================================================
-   ✅ 3. 숫자 버튼 간격 좁히기 (원형 유지, 간격만 축소)
+   ✅ 3. 페이지네이션(숫자 버튼) 영역만 간격/원형 적용
    ========================================================= */
-div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] {
-    display: flex !important;
-    flex-direction: row !important; 
-    flex-wrap: nowrap !important;
-    justify-content: center !important;
-    gap: 6px !important;  /* 👈 버튼 사이 간격을 12px -> 6px로 확 줄임 */
-    margin-top: 5px !important;
+.pager [data-testid="stHorizontalBlock"]{
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 4px !important;            /* 👈 4px로 예쁘게 딱 붙음 */
+  justify-content: center !important;
+  margin-top: 6px !important;
 }
 
-/* 컬럼 너비를 45px로 꽉 묶음 */
-div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
-    min-width: 45px !important;
-    width: 45px !important;
-    max-width: 45px !important;
-    flex: 0 0 45px !important;
-    padding: 0 !important;
+/* 컬럼 패딩/마진 제거 및 내용물 크기에 맞게 조절 */
+.pager [data-testid="column"]{
+  padding: 0 !important;
+  margin: 0 !important;
+  min-width: unset !important;
+  width: auto !important;
+  flex: 0 0 auto !important;
 }
 
-/* 45x45 원형 숫자 버튼 */
-div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] button {
-    width: 45px !important;
-    height: 45px !important;
-    min-height: 45px !important;
-    border-radius: 50% !important; /* 완벽한 원형 */
-    padding: 0 !important;
-    margin: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    background-color: #f1f5f9 !important; /* 숫자버튼 기본 배경 */
-    border: 1px solid #cbd5e1 !important;
+/* 원형 버튼 크기 42px 지정 */
+.pager button{
+  width: 42px !important;
+  height: 42px !important;
+  min-height: 42px !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
-div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] button p {
-    font-size: 1.15rem !important;
-    font-weight: 800 !important;
-    margin: 0 !important;
-    color: #334155 !important; /* 기본 숫자 색 */
+.pager button p {
+  font-size: 1.15rem !important;
+  font-weight: 800 !important;
+  margin: 0 !important;
 }
 
 /* 숫자 버튼 선택 시 색상 (파랑/하늘색) */
-div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] button[kind="primary"] {
-    background: linear-gradient(135deg, #0ea5e9, #06b6d4) !important;
-    border: none !important;
-    box-shadow: 0 6px 15px rgba(14, 165, 233, 0.3) !important;
+.pager button[kind="primary"] {
+  background: linear-gradient(135deg, #0ea5e9, #06b6d4) !important;
+  border: none !important;
+  box-shadow: 0 6px 15px rgba(14, 165, 233, 0.3) !important;
 }
-div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] button[kind="primary"] p {
-    color: #ffffff !important;
+.pager button[kind="primary"] p {
+  color: #ffffff !important;
 }
 </style>
 """,
@@ -273,7 +282,7 @@ with list_col:
             st.session_state.scroll_to_top = True
             st.rerun()
 
-    # 페이지네이션 
+    # 페이지네이션 로직
     MAX_VISIBLE_BUTTONS = 5
     half_window = MAX_VISIBLE_BUTTONS // 2
     
@@ -286,7 +295,9 @@ with list_col:
         
     visible_pages = list(range(start_page, end_page))
 
-    # 숫자 버튼 (이 컬럼 안에서만 원형 및 간격 좁힘 디자인 적용됨)
+    # ✅ 래퍼 클래스로 감싸서 해당 영역만 콕 집어 CSS 적용
+    st.markdown("<div class='pager'>", unsafe_allow_html=True)
+    
     cols = st.columns(len(visible_pages))
     
     for idx, p in enumerate(visible_pages):
@@ -297,3 +308,5 @@ with list_col:
                 st.session_state.headline = random.choice(HEADLINES)
                 st.session_state.scroll_to_top = True
                 st.rerun()
+                
+    st.markdown("</div>", unsafe_allow_html=True)
