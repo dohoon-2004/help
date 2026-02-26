@@ -5,7 +5,8 @@ import streamlit.components.v1 as components
 # 노래 목록(여기에만 추가/수정)
 # -----------------------------
 SONGS = [
-{"id": "river-flows-in-you", "title": "River Flows in You", "artist": "Yiruma", "videoId": "7maJOI3QMu0"},
+    {"id": "weightless", "title": "Weightless", "artist": "Marconi Union", "videoId": "UfcAVejslrU"},
+    {"id": "example2", "title": "Never Gonna Give You Up", "artist": "Rick Astley", "videoId": "dQw4w9WgXcQ"},
 ]
 
 # -----------------------------
@@ -23,7 +24,8 @@ def yt_embed(video_id: str, title: str):
       ></iframe>
     </div>
     """
-    components.html(html, height=420)
+    # ✅ 플레이어 아래 여백 줄이기: height를 과하게 크게 잡지 않음
+    components.html(html, height=340)
 
 def heart_icon(is_fav: bool) -> str:
     return "🩷" if is_fav else "🤍"
@@ -43,15 +45,15 @@ st.markdown(
 footer {visibility: hidden;}
 header {visibility: hidden;}
 
-.block-container {padding-top: 2.2rem; padding-bottom: 2.2rem; max-width: 1200px;}
-h1,h2,h3 {letter-spacing:-0.3px;}
-.small-muted {color: rgba(0,0,0,0.55); font-size: 0.92rem;}
+/* 전체 여백/간격 줄이기 */
+.block-container {padding-top: 1.6rem; padding-bottom: 1.2rem; max-width: 1200px;}
+div[data-testid="stVerticalBlock"]{ gap: 0.55rem; }
 
 div[data-testid="stVerticalBlockBorderWrapper"]{
   border-radius: 18px !important;
 }
 
-/* 유튜브 래퍼 */
+/* 플레이어 */
 .yt-wrap{
   position:relative;
   padding-top:56.25%;
@@ -59,6 +61,7 @@ div[data-testid="stVerticalBlockBorderWrapper"]{
   overflow:hidden;
   background:#000;
   box-shadow: 0 8px 30px rgba(0,0,0,0.10);
+  margin-bottom: 0; /* 아래 여백 제거 */
 }
 .yt-wrap iframe{
   position:absolute; inset:0;
@@ -73,7 +76,14 @@ div[data-testid="stVerticalBlockBorderWrapper"]{
   white-space: nowrap;
 }
 
-/* 액션 영역(체크/하트) 세로 중앙 정렬 */
+/* 텍스트 크기 */
+.player-title {font-size: 1.55rem; font-weight: 800; letter-spacing: -0.3px; margin: 0;}
+.player-artist {font-size: 1.20rem; font-weight: 750; color: rgba(0,0,0,0.68); margin-top: 0.15rem;}
+
+.list-title {font-size: 1.05rem; font-weight: 750; margin: 0;}
+.list-artist {font-size: 1.00rem; font-weight: 650; color: rgba(0,0,0,0.62); margin-top: 0.15rem;}
+
+/* 액션(체크/하트) 가운데 정렬 */
 .action-pad{
   display:flex;
   height: 100%;
@@ -94,40 +104,28 @@ if "selected_id" not in st.session_state:
 if "favorites" not in st.session_state:
     st.session_state.favorites = set()
 
-# -----------------------------
-# 헤더 + 옵션
-# -----------------------------
-st.markdown("## 🎧 노래")
-
+# 옵션(원하시면 통째로 삭제 가능)
 with st.sidebar:
-    st.markdown("### 옵션")
     only_fav = st.checkbox("🩷 즐겨찾기만 보기", value=False)
 
-visible_songs = SONGS
-if only_fav:
-    visible_songs = [s for s in SONGS if s["id"] in st.session_state.favorites]
+visible_songs = SONGS if not only_fav else [s for s in SONGS if s["id"] in st.session_state.favorites]
 
 # -----------------------------
-# 레이아웃 (✅ 재생 왼쪽 / 목록 오른쪽)
+# 레이아웃 (재생 왼쪽 / 목록 오른쪽)
 # -----------------------------
 player_col, list_col = st.columns([1.0, 1.25], gap="large")
 
 # ---- 왼쪽: 재생 ----
 with player_col:
-    st.markdown("### 재생")
-
     current = next((s for s in SONGS if s["id"] == st.session_state.selected_id), None)
-    if not current:
-        st.info("오른쪽 목록에서 노래를 체크해 주세요.")
-    else:
+    if current:
         is_fav = (current["id"] in st.session_state.favorites)
 
-        top1, top2 = st.columns([0.84, 0.16], gap="small")
-        with top1:
-            st.markdown(f"#### {current['title']}")
-            if current.get("artist"):
-                st.markdown(f"<div class='small-muted'>{current['artist']}</div>", unsafe_allow_html=True)
-        with top2:
+        t1, t2 = st.columns([0.86, 0.14], gap="small")
+        with t1:
+            st.markdown(f"<div class='player-title'>{current['title']}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='player-artist'>{current.get('artist','')}</div>", unsafe_allow_html=True)
+        with t2:
             if st.button(heart_icon(is_fav), key=f"fav_now_{current['id']}"):
                 if is_fav:
                     st.session_state.favorites.remove(current["id"])
@@ -136,16 +134,11 @@ with player_col:
                 st.rerun()
 
         yt_embed(current["videoId"], current["title"])
-        st.link_button(
-            "YouTube에서 열기",
-            f"https://www.youtube.com/watch?v={current['videoId']}",
-            use_container_width=True,
-        )
+    else:
+        st.info("오른쪽에서 노래를 체크해 주세요.")
 
 # ---- 오른쪽: 목록 ----
 with list_col:
-    st.markdown("### 목록")
-
     if not visible_songs:
         st.info("표시할 노래가 없습니다.")
     else:
@@ -156,13 +149,10 @@ with list_col:
             with st.container(border=True):
                 c1, c2 = st.columns([0.78, 0.22], gap="medium")
 
-                # 텍스트 정보(썸네일 제거)
                 with c1:
-                    st.markdown(f"**{song['title']}**")
-                    if song.get("artist"):
-                        st.markdown(f"<div class='small-muted'>{song['artist']}</div>", unsafe_allow_html=True)
+                    st.markdown(f"<div class='list-title'>{song['title']}</div>", unsafe_allow_html=True)
+                    st.markdown(f"<div class='list-artist'>{song.get('artist','')}</div>", unsafe_allow_html=True)
 
-                # 버튼(체크/하트) - 가운데 정렬 느낌
                 with c2:
                     st.markdown("<div class='action-pad'>", unsafe_allow_html=True)
                     b1, b2 = st.columns([1, 1], gap="small")
