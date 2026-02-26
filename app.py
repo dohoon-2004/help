@@ -112,15 +112,15 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
 }
 
 /* =========================================================
-   ✅ 글귀 정중앙 정렬 추가
+   ✅ 글귀 정중앙 정렬, 크기 축소 & 밑에 여백 넉넉히 추가
    ========================================================= */
 .headline{
-  font-size: 2.2rem;
+  font-size: 2.0rem !important;  /* 크기 소폭 축소 (2.2 -> 2.0) */
   font-weight: 900;
   letter-spacing: -0.6px;
-  margin: 0.2rem 0 0.4rem 0;
+  margin: 0.2rem 0 1.5rem 0 !important; /* 아래 여백 대폭 추가 (0.4 -> 1.5) */
   color: var(--text) !important;
-  text-align: center !important; /* 👈 완벽한 가운데 정렬 */
+  text-align: center !important; 
 }
 
 .yt-wrap{
@@ -133,12 +133,25 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
 }
 .yt-wrap iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
 
+/* =========================================================
+   ✅ 플레이어 아래 텍스트 (여백 대폭 축소 & 크기 소폭 축소)
+   ========================================================= */
 .song-info{
-  margin-top: 0.5rem;
+  margin-top: 0.1rem !important; /* 플레이어와 제목 사이 여백 거의 없앰 */
   margin-bottom: 1.8rem;
 }
-.song-title{ font-size: 1.65rem; font-weight: 800; color: var(--text) !important; margin:0; }
-.song-artist{ font-size: 1.40rem; font-weight: 600; color: var(--muted) !important; margin:0.2rem 0 0 0; }
+.song-title{ 
+  font-size: 1.5rem !important;  /* 크기 소폭 축소 (1.65 -> 1.5) */
+  font-weight: 800; 
+  color: var(--text) !important; 
+  margin:0; 
+}
+.song-artist{ 
+  font-size: 1.25rem !important; /* 크기 소폭 축소 (1.40 -> 1.25) */
+  font-weight: 600; 
+  color: var(--muted) !important; 
+  margin:0.1rem 0 0 0 !important; /* 제목과 가수 사이 여백도 좁게 */
+}
 
 /* =========================================================
    ✅ 노래 목록 버튼 (핑크/보라 유지)
@@ -323,7 +336,7 @@ with list_col:
         current_label = labels[0] if labels else "1"
 
     chosen = st.radio(
-        label="",
+        label="pagination",
         options=labels,
         index=labels.index(current_label) if labels else 0,
         horizontal=True,
