@@ -2,10 +2,12 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 # -----------------------------
-# 노래 목록(여기에만 추가/수정)
+# 노래 목록(✅ 기본값: River Flows in You)
 # -----------------------------
 SONGS = [
     {"id": "river-flows-in-you", "title": "River Flows in You", "artist": "Yiruma", "videoId": "7maJOI3QMu0"},
+    # 필요하면 여기 아래로 계속 추가하세요:
+    # {"id": "new", "title": "노래제목", "artist": "가수", "videoId": "유튜브_VIDEO_ID"},
 ]
 
 # -----------------------------
@@ -23,8 +25,8 @@ def yt_embed(video_id: str, title: str):
       ></iframe>
     </div>
     """
-    # ✅ 플레이어 아래 여백 줄이기: height를 과하게 크게 잡지 않음
-    components.html(html, height=340)
+    # ✅ 플레이어 사이즈 "정말 조금" 키움
+    components.html(html, height=380)
 
 def heart_icon(is_fav: bool) -> str:
     return "🩷" if is_fav else "🤍"
@@ -35,37 +37,43 @@ def check_icon(is_selected: bool) -> str:
 # -----------------------------
 # 페이지 설정 + 스타일
 # -----------------------------
-st.set_page_config(page_title="노래", page_icon="🎧", layout="wide")
+st.set_page_config(page_title="player", page_icon="🎧", layout="wide")
 
 st.markdown(
     """
 <style>
+/* 기본 UI 숨김 */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header {visibility: hidden;}
 
-/* 전체 여백/간격 줄이기 */
-.block-container {padding-top: 1.6rem; padding-bottom: 1.2rem; max-width: 1200px;}
-div[data-testid="stVerticalBlock"]{ gap: 0.55rem; }
+/* 배경/레이아웃 */
+[data-testid="stAppViewContainer"] { background: #f7f7fb; }
+.block-container { padding-top: 1.4rem; padding-bottom: 1.1rem; max-width: 1200px; }
+div[data-testid="stVerticalBlock"]{ gap: 0.40rem; }
 
+/* 카드 느낌 */
 div[data-testid="stVerticalBlockBorderWrapper"]{
   border-radius: 18px !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(0,0,0,0.06) !important;
+  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
 }
 
 /* 플레이어 */
 .yt-wrap{
-  position:relative;
-  padding-top:56.25%;
-  border-radius:18px;
-  overflow:hidden;
-  background:#000;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.10);
-  margin-bottom: 0; /* 아래 여백 제거 */
+  position: relative;
+  padding-top: 56.25%;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 12px 34px rgba(0,0,0,0.10);
+  margin-bottom: 0;   /* 아래 여백 제거 */
 }
 .yt-wrap iframe{
-  position:absolute; inset:0;
-  width:100%; height:100%;
-  border:0;
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  border: 0;
 }
 
 /* 버튼 */
@@ -75,16 +83,16 @@ div[data-testid="stVerticalBlockBorderWrapper"]{
   white-space: nowrap;
 }
 
-/* 텍스트 크기 */
-.player-title {font-size: 1.55rem; font-weight: 800; letter-spacing: -0.3px; margin: 0;}
-.player-artist {font-size: 1.20rem; font-weight: 750; color: rgba(0,0,0,0.68); margin-top: 0.15rem;}
+/* 텍스트(가수 이름 더 크게) */
+.player-title { font-size: 1.55rem; font-weight: 850; letter-spacing: -0.3px; margin: 0; }
+.player-artist { font-size: 1.35rem; font-weight: 800; color: rgba(0,0,0,0.70); margin-top: 0.10rem; }
 
-.list-title {font-size: 1.05rem; font-weight: 750; margin: 0;}
-.list-artist {font-size: 1.00rem; font-weight: 650; color: rgba(0,0,0,0.62); margin-top: 0.15rem;}
+.list-title { font-size: 1.05rem; font-weight: 800; margin: 0; }
+.list-artist { font-size: 1.05rem; font-weight: 750; color: rgba(0,0,0,0.62); margin-top: 0.10rem; }
 
 /* 액션(체크/하트) 가운데 정렬 */
 .action-pad{
-  display:flex;
+  display: flex;
   height: 100%;
   align-items: center;
   justify-content: center;
@@ -103,16 +111,10 @@ if "selected_id" not in st.session_state:
 if "favorites" not in st.session_state:
     st.session_state.favorites = set()
 
-# 옵션(원하시면 통째로 삭제 가능)
-with st.sidebar:
-    only_fav = st.checkbox("🩷 즐겨찾기만 보기", value=False)
-
-visible_songs = SONGS if not only_fav else [s for s in SONGS if s["id"] in st.session_state.favorites]
-
 # -----------------------------
 # 레이아웃 (재생 왼쪽 / 목록 오른쪽)
 # -----------------------------
-player_col, list_col = st.columns([1.0, 1.25], gap="large")
+player_col, list_col = st.columns([1.08, 1.0], gap="large")
 
 # ---- 왼쪽: 재생 ----
 with player_col:
@@ -120,7 +122,7 @@ with player_col:
     if current:
         is_fav = (current["id"] in st.session_state.favorites)
 
-        t1, t2 = st.columns([0.86, 0.14], gap="small")
+        t1, t2 = st.columns([0.88, 0.12], gap="small")
         with t1:
             st.markdown(f"<div class='player-title'>{current['title']}</div>", unsafe_allow_html=True)
             st.markdown(f"<div class='player-artist'>{current.get('artist','')}</div>", unsafe_allow_html=True)
@@ -136,12 +138,12 @@ with player_col:
     else:
         st.info("오른쪽에서 노래를 체크해 주세요.")
 
-# ---- 오른쪽: 목록 ----
+# ---- 오른쪽: 목록(썸네일 없음, 문구 없음) ----
 with list_col:
-    if not visible_songs:
-        st.info("표시할 노래가 없습니다.")
+    if not SONGS:
+        st.info("SONGS에 노래를 추가해 주세요.")
     else:
-        for song in visible_songs:
+        for song in SONGS:
             is_selected = (song["id"] == st.session_state.selected_id)
             is_fav = (song["id"] in st.session_state.favorites)
 
