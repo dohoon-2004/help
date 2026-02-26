@@ -30,8 +30,8 @@ def yt_embed(video_id: str, title: str):
       ></iframe>
     </div>
     """
-    # 모바일 빈 공간 방지: height 과도하게 잡지 않기
-    components.html(html, height=200)
+    # ✅ 요청하신 대로 높이를 190으로 줄였습니다.
+    components.html(html, height=190)
 
 def check_icon(is_selected: bool) -> str:
     return "✅" if is_selected else "☐"
@@ -48,13 +48,13 @@ header {visibility: hidden;}
 [data-testid="stAppViewContainer"] { background: #0f1014; }
 .block-container { padding-top: 1.0rem; padding-bottom: 0.8rem; max-width: 1200px; }
 
-/* 상단 글귀: 위/아래 여백 */
+/* ✅ 상단 글귀 사이즈 (font-size 값을 원하시는 대로 조절하세요) */
 .headline{
-  font-size: 2.0rem;
+  font-size: 2.2rem; 
   font-weight: 900;
   letter-spacing: -0.6px;
-  margin-top: 0.7rem;      /* ✅ 위 여백 */
-  margin-bottom: 0.9rem;   /* ✅ 아래 여백 */
+  margin-top: 0.7rem;
+  margin-bottom: 0.9rem;
   color: rgba(255,255,255,0.92);
 }
 
@@ -73,12 +73,14 @@ header {visibility: hidden;}
   border: 0;
 }
 
-/* 플레이어 바로 아래 텍스트 */
+/* ✅ 플레이어 바로 아래 텍스트 (위로 끌어올림) */
 .song-title{
   font-size: 1.45rem;
   font-weight: 900;
   letter-spacing: -0.4px;
-  margin-top: 0.50rem;   /* ✅ 플레이어 바로 밑 */
+  margin-top: -1.0rem;    /* 높이를 190으로 맞췄으므로 이 정도 음수면 딱 맞습니다 */
+  position: relative; 
+  z-index: 10;
   color: rgba(255,255,255,0.92);
 }
 .song-artist{
@@ -86,14 +88,16 @@ header {visibility: hidden;}
   font-weight: 900;
   letter-spacing: -0.4px;
   margin-top: 0.08rem;
+  position: relative;
+  z-index: 10;
   color: rgba(255,255,255,0.70);
 }
 
-/* 목록 줄(모바일에서도 오른쪽에 체크 고정) */
+/* 목록 줄 */
 .list-row{
   display:flex;
   align-items:center;
-  justify-content:space-between;   /* ✅ 오른쪽 끝으로 밀기 */
+  justify-content:space-between;
   gap: 12px;
   padding: 14px 14px;
   border-radius: 18px;
@@ -103,7 +107,7 @@ header {visibility: hidden;}
   margin-bottom: 12px;
 }
 .list-text{
-  min-width: 0; /* 줄바꿈/잘림 처리 위해 필요 */
+  min-width: 0;
 }
 .list-title{
   font-size: 1.05rem;
@@ -119,7 +123,7 @@ header {visibility: hidden;}
   line-height: 1.2;
 }
 
-/* 체크 버튼(오른쪽) */
+/* 체크 버튼 */
 .check-wrap{
   flex: 0 0 auto;
 }
@@ -137,25 +141,24 @@ header {visibility: hidden;}
 if "selected_id" not in st.session_state:
     st.session_state.selected_id = SONGS[0]["id"] if SONGS else None
 
-# 상단 글귀(세션마다 1개 고정)
+# 상단 글귀 초기화
 if "headline" not in st.session_state:
     st.session_state.headline = random.choice(HEADLINES)
 
 st.markdown(f"<div class='headline'>{st.session_state.headline}</div>", unsafe_allow_html=True)
 
-# 레이아웃: 모바일에서는 자동으로 세로로 쌓입니다(재생 위, 목록 아래)
+# 레이아웃
 player_col, list_col = st.columns([1.08, 1.0], gap="large")
 
 with player_col:
     current = next((s for s in SONGS if s["id"] == st.session_state.selected_id), None)
     if current:
         yt_embed(current["videoId"], current["title"])
-        # ✅ 플레이어 바로 밑에 제목/가수
+        # 플레이어 바로 밑에 제목/가수
         st.markdown(f"<div class='song-title'>{current['title']}</div>", unsafe_allow_html=True)
         st.markdown(f"<div class='song-artist'>{current['artist']}</div>", unsafe_allow_html=True)
 
 with list_col:
-    # ✅ 목록: HTML로 줄을 만들고, 체크 버튼은 오른쪽 끝에 고정
     for song in SONGS:
         is_selected = (song["id"] == st.session_state.selected_id)
 
@@ -172,13 +175,12 @@ with list_col:
             unsafe_allow_html=True,
         )
 
-        # 버튼은 Streamlit 컴포넌트라 HTML 안에 직접 넣기 어렵습니다.
-        # 대신 "바로 아래"에 두되, wide + padding으로 오른쪽에 붙어 보이도록 처리합니다.
-        # (가장 안정적으로 모바일에서도 오른쪽 정렬됩니다.)
         btn_col_l, btn_col_r = st.columns([0.82, 0.18])
         with btn_col_l:
             st.write("")
         with btn_col_r:
             if st.button(check_icon(is_selected), key=f"pick_{song['id']}", use_container_width=True):
                 st.session_state.selected_id = song["id"]
+                # ✅ 노래를 바꿀 때마다 새로운 글귀로 변경
+                st.session_state.headline = random.choice(HEADLINES)
                 st.rerun()
