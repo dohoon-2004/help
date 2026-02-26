@@ -3,16 +3,17 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 # -----------------------------
-# 노래 목록(코드에 고정)
+# 노래 목록 (괄호 및 괄호 안 내용 모두 제거)
 # -----------------------------
 SONGS = [
     {"id": "river-flows-in-you", "title": "River Flows in You", "artist": "Yiruma", "videoId": "7maJOI3QMu0"},
     {"id": "its-time", "title": "It's Time", "artist": "Imagine Dragons", "videoId": "NASqUELHjPE"},
-    {"id": "iu-night-letter", "title": "밤편지", "artist": "아이유(IU)", "videoId": "EjMTw4xLcBI"},
-    {"id": "stronger", "title": "Stronger (What Doesn't Kill You)", "artist": "Kelly Clarkson", "videoId": "Xn676-fLq7I"},
+    {"id": "iu-night-letter", "title": "밤편지", "artist": "아이유", "videoId": "EjMTw4xLcBI"},
+    {"id": "stronger", "title": "Stronger", "artist": "Kelly Clarkson", "videoId": "Xn676-fLq7I"},
 ]
 
-HEADLINES = ["진짜 사랑해", "고마워", "옆에 있어줘", "덕분에 행복해", "안아줄게", "맛있는 거 먹자", "바다보러 갈래?"] 
+# 상단 글귀
+HEADLINES = ["진짜 사랑해", "고마워", "옆에 있어줘", "덕분에 행복해", "안아줄게", "맛있는 거 먹자", "바다보러 갈래?"]
 
 def yt_embed(video_id: str, title: str):
     src = f"https://www.youtube-nocookie.com/embed/{video_id}?rel=0&controls=1"
@@ -65,13 +66,14 @@ header {visibility: hidden;}
   border: 0;
 }
 
-/* 플레이어 아래 텍스트 */
+/* ✅ 플레이어 아래 텍스트 (가운데 정렬 적용) */
 .song-title{
   font-size: 1.45rem;
   font-weight: 700;
   letter-spacing: -0.4px;
   margin-top: 0.25rem;
   color: rgba(255,255,255,0.92);
+  text-align: center; /* 👈 가운데 정렬 */
 }
 .song-artist{
   font-size: 1.40rem;
@@ -80,9 +82,10 @@ header {visibility: hidden;}
   margin-top: 0.05rem;
   margin-bottom: 3.5rem; 
   color: rgba(255,255,255,0.70);
+  text-align: center; /* 👈 가운데 정렬 */
 }
 
-/* ✅ 디자인 업그레이드: 글래스모피즘(반투명 유리) 느낌 버튼 */
+/* 글래스모피즘 느낌 버튼 */
 div[data-testid="stButton"] > button {
   width: 100%;
   text-align: left;
@@ -93,16 +96,15 @@ div[data-testid="stButton"] > button {
   border: 1px solid rgba(255,255,255,0.08);
   box-shadow: 0 4px 15px rgba(0,0,0,0.15);
   white-space: pre-wrap; 
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); /* 부드러운 애니메이션 */
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
   
-  /* 기본 텍스트(가수명) 세팅: 작고 은은하게 */
   font-size: 0.95rem;
   font-weight: 500;
   color: rgba(255,255,255,0.55) !important;
   line-height: 1.6;
 }
 
-/* ✅ 꼼수: 첫 번째 줄(제목)만 크고 굵고 하얗게 분리 */
+/* 첫 번째 줄(제목) 분리 */
 div[data-testid="stButton"] > button::first-line,
 div[data-testid="stButton"] > button p::first-line {
   font-size: 1.25rem;
@@ -111,7 +113,7 @@ div[data-testid="stButton"] > button p::first-line {
   line-height: 1.4;
 }
 
-/* 마우스 올렸을 때 (Hover) - 살짝 위로 떠오르는 효과 */
+/* Hover 효과 */
 div[data-testid="stButton"] > button[kind="secondary"]:hover {
   background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.03));
   border-color: rgba(255,255,255,0.25);
@@ -120,7 +122,7 @@ div[data-testid="stButton"] > button[kind="secondary"]:hover {
   color: rgba(255,255,255,0.65) !important;
 }
 
-/* ✅ 선택된 버튼 - 은은한 보라/핑크 그라데이션으로 고급스럽게 하이라이트 */
+/* 선택된 버튼 하이라이트 */
 div[data-testid="stButton"] > button[kind="primary"] {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)) !important;
   border: 1px solid rgba(168, 85, 247, 0.5) !important;
@@ -128,13 +130,11 @@ div[data-testid="stButton"] > button[kind="primary"] {
   transform: translateY(0px); 
 }
 
-/* 선택된 버튼의 제목 텍스트는 완전 흰색으로 유지 */
 div[data-testid="stButton"] > button[kind="primary"]::first-line,
 div[data-testid="stButton"] > button[kind="primary"] p::first-line {
   color: #ffffff;
 }
 
-/* Streamlit 포커스 찌꺼기 테두리 제거 */
 div[data-testid="stButton"] > button:focus:not(:active) { border-color: inherit !important; box-shadow: inherit !important; }
 </style>
 """,
@@ -164,7 +164,6 @@ with list_col:
         is_selected = (song["id"] == st.session_state.selected_id)
         btn_type = "primary" if is_selected else "secondary"
         
-        # 버튼 하나에 '제목 \n 가수' 형태로 텍스트를 넣습니다.
         if st.button(f"{song['title']}\n{song['artist']}", key=f"song_{song['id']}", use_container_width=True, type=btn_type):
             st.session_state.selected_id = song["id"]
             st.session_state.headline = random.choice(HEADLINES)
