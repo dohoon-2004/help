@@ -89,45 +89,49 @@ header {visibility: hidden;}
   font-size: 1.40rem;
   font-weight: 600;
   letter-spacing: -0.4px;
-  margin-top: 0.08rem;
+  margin-top: 0.04rem;
   position: relative;
   z-index: 10;
   color: rgba(255,255,255,0.70);
 }
 
-/* 목록 줄 */
+/* 1. 리스트 박스 크기 키우기 */
 .list-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap: 12px;
-  padding: 14px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 95px;       /* 👈 박스 높이를 넉넉하게 키움 */
+  padding: 16px 20px;     /* 👈 안쪽 여백도 넓게 조정 */
   border-radius: 18px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 10px 28px rgba(15, 23, 42, 0.06);
-  margin-bottom: 12px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  margin-bottom: -15px;   /* 👈 버튼이 박스 위로 겹칠 수 있도록 아래 공간을 당김 */
 }
+
+/* 2. 텍스트가 버튼을 가리지 않게 너비 제한 */
 .list-text{
-  min-width: 0;
+  width: 75%; 
 }
+
+/* 글씨도 박스 크기에 맞게 살짝 키웠습니다 */
 .list-title{
-  font-size: 1.05rem;
+  font-size: 1.15rem;
   font-weight: 900;
   color: rgba(255,255,255,0.92);
   line-height: 1.2;
 }
 .list-artist{
-  font-size: 1.10rem;
-  font-weight: 850;
+  font-size: 1.15rem;
+  font-weight: 500;
   color: rgba(255,255,255,0.65);
-  margin-top: 4px;
+  margin-top: 6px;
   line-height: 1.2;
 }
 
-/* 체크 버튼 */
-.check-wrap{
-  flex: 0 0 auto;
+/* 3. 체크 버튼을 박스 안(위)으로 강제로 끌어올리기 */
+.stButton {
+  margin-top: -72px;      /* 👈 이 수치로 버튼을 박스 안으로 끌어올림 */
+  margin-bottom: 25px;    /* 👈 다음 리스트 박스와의 간격 */
 }
 .stButton button{
   border-radius: 14px;
