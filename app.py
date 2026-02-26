@@ -4,7 +4,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 # -----------------------------
-# 노래 목록 (테스트를 위해 30곡으로 늘려두었습니다)
+# 노래 목록 (테스트용 30곡)
 # -----------------------------
 BASE_SONGS = [
     {"id": "river-flows-in-you", "title": "River Flows in You", "artist": "Yiruma", "videoId": "7maJOI3QMu0"},
@@ -18,7 +18,7 @@ BASE_SONGS = [
     {"id": "akmu-200-percent", "title": "200%", "artist": "AKMU", "videoId": "0Oi8jDMvd_w"},
     {"id": "bol4-hug", "title": "Hug", "artist": "볼빨간사춘기", "videoId": "qfeoX17dav0"},
 ]
-# 곡이 많을 때 '최대 5개 표시'가 작동하는지 보기 위해 3배로 복사
+# 최대 5개 표시 테스트용 복사
 SONGS = []
 for i in range(3):
     for song in BASE_SONGS:
@@ -68,20 +68,21 @@ header {visibility: hidden !important;}
 [data-testid="stToolbar"] {display: none !important;}
 [data-testid="stHeader"] {display: none !important;}
 
-/* ✅ 아주 밝고 화사한 라이트 그레이/화이트 배경 */
-[data-testid="stAppViewContainer"] { 
-  background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); 
+/* ✅ 모바일 강제 다크모드 방어: 확실한 밝은 배경 */
+.stApp, [data-testid="stAppViewContainer"] { 
+  background-color: #fdfbfb !important;
+  background-image: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%) !important; 
 }
 .block-container { padding-top: 1.0rem; padding-bottom: 0.8rem; max-width: 1200px; }
 
-/* 상단 글귀 (밝은 배경에 맞춰 진한 색으로 변경) */
+/* 상단 글귀 */
 .headline{
   font-size: 2.2rem; 
   font-weight: 900;
   letter-spacing: -0.6px;
   margin-top: 0.7rem;
   margin-bottom: 0.9rem;
-  color: #111827;
+  color: #111827 !important;
 }
 
 /* 플레이어 */
@@ -109,13 +110,11 @@ header {visibility: hidden !important;}
   margin-top: 0.5rem;
   margin-bottom: 3.5rem;
 }
-
-/* 플레이어 밑 제목 (어두운 색으로 가독성 확보) */
 .song-title{
   font-size: 1.65rem;
   font-weight: 800;
   letter-spacing: -0.4px;
-  color: #111827;
+  color: #111827 !important;
   text-align: left;
   margin: 0;
 }
@@ -124,23 +123,23 @@ header {visibility: hidden !important;}
   font-weight: 600;
   letter-spacing: -0.4px;
   margin-top: 0.2rem;
-  color: #4b5563;
+  color: #4b5563 !important;
   text-align: left;
   margin-bottom: 0;
 }
 
-/* ✅ 목록 버튼 (밝은 테마 글래스모피즘) */
+/* 목록 버튼 공통 */
 div[data-testid="stButton"] > button {
   width: 100%;
   text-align: center;
   border-radius: 16px;
   padding: 18px 22px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.85) !important;
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03) !important;
   white-space: pre-wrap; 
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+  transition: all 0.2s; 
   
   font-size: 0.95rem;
   font-weight: 600;
@@ -148,70 +147,70 @@ div[data-testid="stButton"] > button {
   line-height: 1.6;
 }
 
-/* 첫 번째 줄(제목) */
 div[data-testid="stButton"] > button::first-line,
 div[data-testid="stButton"] > button p::first-line {
   font-size: 1.25rem;
   font-weight: 800;
-  color: #0f172a;
+  color: #0f172a !important;
   line-height: 1.4;
 }
 
-/* Hover 효과 */
 div[data-testid="stButton"] > button[kind="secondary"]:hover {
-  background: rgba(255, 255, 255, 1);
-  border-color: rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 1) !important;
+  border-color: rgba(0, 0, 0, 0.15) !important;
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08) !important;
 }
 
-/* 선택된 버튼 하이라이트 (보라/핑크 그라데이션 유지) */
+/* 선택된 버튼 하이라이트 */
 div[data-testid="stButton"] > button[kind="primary"] {
   background: linear-gradient(135deg, #6366f1, #a855f7) !important;
   border: none !important;
   box-shadow: 0 6px 20px rgba(168, 85, 247, 0.3) !important;
-  transform: translateY(0px); 
+  transform: translateY(0px) !important; 
 }
-
 div[data-testid="stButton"] > button[kind="primary"]::first-line,
 div[data-testid="stButton"] > button[kind="primary"] p::first-line {
-  color: #ffffff;
+  color: #ffffff !important;
 }
 div[data-testid="stButton"] > button[kind="primary"] {
   color: rgba(255,255,255,0.85) !important;
 }
-
 div[data-testid="stButton"] > button:focus:not(:active) { border-color: inherit !important; box-shadow: inherit !important; }
 
 /* =========================================================
-   ✅ 모바일 숫자 버튼 무조건 한 줄 & 동그라미로 강제 고정
+   ✅ 모바일 호환 100%: 이중 구조를 이용한 페이지 버튼 타겟팅
+   (최신 CSS가 무시되는 모바일에서도 절대 안 깨집니다)
    ========================================================= */
-div[data-testid="stElementContainer"]:has(.page-numbers-row) + div[data-testid="stHorizontalBlock"] {
+div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] {
     flex-direction: row !important;
     flex-wrap: nowrap !important;
     gap: 8px !important;
     justify-content: center !important;
-    margin-top: 15px;
+    margin-top: 15px !important;
+    width: 100% !important;
 }
-div[data-testid="stElementContainer"]:has(.page-numbers-row) + div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
     min-width: unset !important;
     width: auto !important;
     flex: 0 0 auto !important;
+    padding: 0 !important;
 }
-
-/* 숫자 버튼 동그라미 디자인 */
-div[data-testid="stElementContainer"]:has(.page-numbers-row) + div[data-testid="stHorizontalBlock"] button {
+/* 숫자 버튼 동그라미 강제 */
+div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] button {
     padding: 0 !important;
     border-radius: 50% !important; /* 완벽한 원형 */
-    width: 2.8rem !important;      /* 고정 크기 */
-    height: 2.8rem !important;
+    width: 3.0rem !important;      /* 고정 크기 */
+    height: 3.0rem !important;
     font-size: 1.15rem !important;
     font-weight: 800 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
+    white-space: nowrap !important;
 }
-div[data-testid="stElementContainer"]:has(.page-numbers-row) + div[data-testid="stHorizontalBlock"] button::first-line {
+div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] button::first-line,
+div[data-testid="stHorizontalBlock"] div[data-testid="stHorizontalBlock"] button p::first-line {
     font-size: 1.15rem !important;
 }
 </style>
@@ -263,26 +262,23 @@ with list_col:
         if st.button(f"{song['title']}\n{song['artist']}", key=f"song_{song['id']}", use_container_width=True, type=btn_type):
             st.session_state.selected_id = song["id"]
             st.session_state.headline = random.choice(HEADLINES)
-            st.session_state.scroll_to_top = True # 노래 바꿔도 맨 위로 스크롤
+            st.session_state.scroll_to_top = True
             st.rerun()
 
-    # ✅ 최대 5개의 숫자만 보여주는 페이지네이션 로직
+    # 페이지네이션 
     MAX_VISIBLE_BUTTONS = 5
     half_window = MAX_VISIBLE_BUTTONS // 2
     
     start_page = max(0, st.session_state.page - half_window)
     end_page = start_page + MAX_VISIBLE_BUTTONS
     
-    # 끝 페이지가 전체 페이지 수를 넘어가면 조정
     if end_page > total_pages:
         end_page = total_pages
         start_page = max(0, total_pages - MAX_VISIBLE_BUTTONS)
         
     visible_pages = list(range(start_page, end_page))
 
-    # 모바일 가로 정렬용 마커
-    st.markdown('<div class="page-numbers-row"></div>', unsafe_allow_html=True)
-    
+    # 모바일에서도 완벽 호환되는 중첩 st.columns 로직
     cols = st.columns(len(visible_pages))
     
     for idx, p in enumerate(visible_pages):
@@ -290,6 +286,6 @@ with list_col:
             btn_type = "primary" if st.session_state.page == p else "secondary"
             if st.button(str(p + 1), key=f"page_btn_{p}", use_container_width=True, type=btn_type):
                 st.session_state.page = p
-                st.session_state.headline = random.choice(HEADLINES) # 글귀 변경
-                st.session_state.scroll_to_top = True # 맨 위로 스크롤
+                st.session_state.headline = random.choice(HEADLINES)
+                st.session_state.scroll_to_top = True
                 st.rerun()
