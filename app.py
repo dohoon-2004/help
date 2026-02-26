@@ -51,8 +51,6 @@ if st.session_state.get("scroll_to_top"):
 
 # -----------------------------
 # CSS (확실히 먹는 방식으로 재구성)
-# - 노래 목록: st.button (핑크/보라)
-# - 페이지네이션: 크기 증가 및 완벽한 가운데 정렬
 # -----------------------------
 st.markdown(
     """
@@ -77,7 +75,7 @@ st.markdown(
   --page-grad: linear-gradient(135deg, #0ea5e9, #06b6d4);
 }
 
-/* Streamlit dark theme (여러 버전 대비) */
+/* Streamlit dark theme */
 html[data-theme="dark"], body[data-theme="dark"], .stApp[data-theme="dark"],
 html.dark, body.dark, .stApp.dark{
   --bg: #0f1014;
@@ -124,8 +122,10 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
 .song-title{ font-size: 1.65rem; font-weight: 800; color: var(--text); margin:0; }
 .song-artist{ font-size: 1.40rem; font-weight: 600; color: var(--muted); margin:0.2rem 0 0 0; }
 
-/* ---------- song list button (st.button) ---------- */
-.songlist div[data-testid="stButton"] > button{
+/* =========================================================
+   ✅ 노래 목록 버튼 (st.button 형식 원래대로 완벽 복구)
+   ========================================================= */
+div[data-testid="stButton"] > button {
   width: 100%;
   text-align: center;
   border-radius: 16px !important;
@@ -138,99 +138,95 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
   font-size: 0.95rem;
   font-weight: 650;
 }
-.songlist div[data-testid="stButton"] > button p{ color: var(--muted) !important; }
-.songlist div[data-testid="stButton"] > button::first-line,
-.songlist div[data-testid="stButton"] > button p::first-line{
+div[data-testid="stButton"] > button p { color: var(--muted) !important; }
+div[data-testid="stButton"] > button::first-line,
+div[data-testid="stButton"] > button p::first-line {
   font-size: 1.25rem !important;
   font-weight: 850 !important;
   color: var(--text) !important;
 }
 
-/* 선택된 노래만 색칠: primary 버튼만 그라데이션 */
-.songlist div[data-testid="stButton"] > button[kind="primary"]{
+/* 선택된 노래 버튼 (핑크/보라) */
+div[data-testid="stButton"] > button[kind="primary"] {
   background: var(--song-grad) !important;
   border: none !important;
   box-shadow: 0 8px 18px rgba(236,72,153,0.25) !important;
 }
-.songlist div[data-testid="stButton"] > button[kind="primary"] *{
+div[data-testid="stButton"] > button[kind="primary"] * {
   color: #ffffff !important;
 }
 
-/* ---------- pager (st.radio horizontal) ---------- */
-/* 라디오 버튼 전체 컨테이너 가운데 정렬 */
-div[data-testid="stRadio"] {
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-  width: 100% !important;
-  margin-top: 15px !important;
-}
-
+/* =========================================================
+   ✅ 숫자 버튼 (st.radio) 크기 증가 및 중앙 정렬
+   ========================================================= */
+div[data-testid="stRadio"] { margin-top: 10px; }
 div[data-testid="stRadio"] [role="radiogroup"] {
   display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important; /* 👈 중앙 정렬 핵심 */
   gap: 12px !important;
-  justify-content: center !important;
   flex-wrap: nowrap !important;
+  width: 100% !important;
 }
 
+/* 라디오 버튼 영역을 정확히 50x50 사이즈로 고정 */
 div[data-testid="stRadio"] label {
+  width: 50px !important;       /* 👈 크기 키움 */
+  height: 50px !important;      /* 👈 크기 키움 */
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   margin: 0 !important;
-  position: relative !important; 
-  cursor: pointer !important;
-}
-
-div[data-testid="stRadio"] label > div {
   padding: 0 !important;
-  margin: 0 !important;
 }
 
-/* 실제 동그라미 버튼 모양 및 사이즈 업 */
+/* 실제 원형 배경 (Input 컨테이너) */
+div[data-testid="stRadio"] label > div:first-child {
+  position: absolute !important;
+  top: 0 !important; left: 0 !important;
+  width: 100% !important; height: 100% !important;
+  margin: 0 !important; padding: 0 !important;
+}
+
+/* Input 자체를 클릭 가능한 원형 버튼으로 개조 */
 div[data-testid="stRadio"] input[type="radio"] {
   appearance: none !important;
   -webkit-appearance: none !important;
-  width: 52px !important;
-  height: 52px !important;
-  border-radius: 999px !important;
-  border: 1px solid var(--border) !important;
+  width: 100% !important; height: 100% !important;
+  border-radius: 50% !important;
   background: var(--card) !important;
-  display: inline-flex !important;
-  box-sizing: border-box !important;
+  border: 1px solid var(--border) !important;
+  margin: 0 !important; padding: 0 !important;
   cursor: pointer !important;
-  margin: 0 !important;
+  box-sizing: border-box !important;
 }
 
-/* 숫자 텍스트 완벽한 가운데 정렬 */
-div[data-testid="stRadio"] label p,
-div[data-testid="stRadio"] label span {
-  position: absolute !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
+/* 숫자 텍스트 컨테이너 */
+div[data-testid="stRadio"] label > div:last-child {
+  position: relative !important;
+  z-index: 10 !important;
   pointer-events: none !important;
+}
+
+/* 숫자 텍스트 (글씨 크기도 키움) */
+div[data-testid="stRadio"] label p {
+  font-size: 1.3rem !important;  /* 👈 글씨 크기 키움 */
   font-weight: 850 !important;
-  font-size: 1.15rem !important;
   color: var(--text) !important;
   margin: 0 !important;
 }
 
-/* 선택된 페이지 그라데이션 */
+/* 선택된 숫자 버튼 (파랑/하늘) */
 div[data-testid="stRadio"] input[type="radio"]:checked {
   background: var(--page-grad) !important;
   border: none !important;
-  box-shadow: 0 8px 18px rgba(14,165,233,0.25) !important;
+  box-shadow: 0 8px 18px rgba(14,165,233,0.3) !important;
 }
 
-/* 선택된 텍스트 색상 변경 */
-div[data-testid="stRadio"] input[type="radio"]:checked + div p,
-div[data-testid="stRadio"] input[type="radio"]:checked + div span,
-div[data-testid="stRadio"] input[type="radio"]:checked ~ p,
-div[data-testid="stRadio"] input[type="radio"]:checked ~ span {
+/* 선택된 숫자 버튼의 글자색 (하얀색) */
+div[data-testid="stRadio"] label:has(input[type="radio"]:checked) p {
   color: #ffffff !important;
-}
-
-/* 모바일 간격 유지 */
-@media (max-width: 520px){
-  div[data-testid="stRadio"] [role="radiogroup"] { gap: 8px !important; }
 }
 </style>
 """,
@@ -273,7 +269,7 @@ with list_col:
     end_idx = start_idx + ITEMS_PER_PAGE
     current_songs = SONGS[start_idx:end_idx]
 
-    # 노래 목록 wrapper
+    # 노래 목록
     st.markdown("<div class='songlist'>", unsafe_allow_html=True)
     for song in current_songs:
         is_selected = (song["id"] == st.session_state.selected_id)
