@@ -39,7 +39,6 @@ def yt_embed(video_id: str, title: str):
       ></iframe>
     </div>
     """
-    # 모바일 공백 최소화
     components.html(html, height=190)
 
 st.set_page_config(page_title="player", page_icon="🎧", layout="wide")
@@ -50,7 +49,7 @@ if st.session_state.get("scroll_to_top"):
     st.session_state.scroll_to_top = False
 
 # -----------------------------
-# CSS (요청사항 완벽 반영)
+# CSS 
 # -----------------------------
 st.markdown(
     """
@@ -146,7 +145,6 @@ div[data-testid="stButton"] > button p::first-line {
   color: var(--text) !important;
 }
 
-/* 선택된 노래 버튼 (핑크/보라) */
 div[data-testid="stButton"] > button[kind="primary"] {
   background: var(--song-grad) !important;
   border: none !important;
@@ -161,7 +159,6 @@ div[data-testid="stButton"] > button[kind="primary"] * {
    ========================================================= */
 div[data-testid="stRadio"] { margin-top: 10px; }
 
-/* 1. "pages" 글씨 완전히 숨기기 (label_visibility="collapsed" 보완) */
 div[data-testid="stRadio"] > label {
   display: none !important;
   height: 0 !important;
@@ -172,37 +169,34 @@ div[data-testid="stRadio"] > label {
 div[data-testid="stRadio"] [role="radiogroup"] {
   display: flex !important;
   flex-direction: row !important;
-  justify-content: center !important; /* 👈 가로 중앙 정렬 핵심 */
+  justify-content: center !important; 
   gap: 12px !important;
   flex-wrap: nowrap !important;
   width: 100% !important;
   align-items: center !important;
 }
 
-/* 라디오 전체 항목(label)을 원형 버튼 컨테이너로 */
 div[data-testid="stRadio"] label {
   position: relative !important;
   display: inline-flex !important;
   align-items: center !important;
-  justify-content: center !important; /* 👈 숫자 중앙 정렬 핵심 */
+  justify-content: center !important; 
   margin: 0 !important;
   padding: 0 !important;
   cursor: pointer !important;
-  width: 48px !important;  /* 👈 크기 살짝 키움 */
+  width: 48px !important; 
   height: 48px !important;
 }
 
-/* 라디오 기본 아이콘 DIV 숨기기 */
 div[data-testid="stRadio"] label > div:first-child {
   display: none !important;
 }
 
-/* 실제 원형 모양 (Input 자체를 개조) */
 div[data-testid="stRadio"] input[type="radio"] {
   appearance: none !important;
   -webkit-appearance: none !important;
   position: absolute !important;
-  inset: 0 !important; /* label 크기에 맞게 꽉 채움 */
+  inset: 0 !important; 
   width: 100% !important; height: 100% !important;
   border-radius: 50% !important;
   background: var(--card) !important;
@@ -212,10 +206,9 @@ div[data-testid="stRadio"] input[type="radio"] {
   z-index: 1 !important;
 }
 
-/* 숫자 텍스트 컨테이너 */
 div[data-testid="stRadio"] label > div:last-child {
   position: relative !important;
-  z-index: 10 !important; /* 원 위에 띄움 */
+  z-index: 10 !important; 
   pointer-events: none !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -224,7 +217,6 @@ div[data-testid="stRadio"] label > div:last-child {
   justify-content: center !important;
 }
 
-/* 숫자 텍스트 (글씨 크기 적절히 키움) */
 div[data-testid="stRadio"] label p {
   font-size: 1.2rem !important;
   font-weight: 850 !important;
@@ -234,14 +226,12 @@ div[data-testid="stRadio"] label p {
   line-height: 1 !important;
 }
 
-/* 선택된 숫자 버튼 (파랑/하늘) */
 div[data-testid="stRadio"] input[type="radio"]:checked {
   background: var(--page-grad) !important;
   border: none !important;
   box-shadow: 0 8px 18px rgba(14,165,233,0.3) !important;
 }
 
-/* 선택된 숫자 버튼의 글자색 (하얀색) */
 div[data-testid="stRadio"] label:has(input[type="radio"]:checked) p {
   color: #ffffff !important;
 }
@@ -287,7 +277,6 @@ with list_col:
     current_songs = SONGS[start_idx:end_idx]
 
     # 노래 목록
-    # st.markdown("<div class='songlist'>", unsafe_allow_html=True) # HTML 래퍼 오류로 제거
     for song in current_songs:
         is_selected = (song["id"] == st.session_state.selected_id)
         btn_type = "primary" if is_selected else "secondary"
@@ -297,7 +286,6 @@ with list_col:
             st.session_state.headline = random.choice(HEADLINES)
             st.session_state.scroll_to_top = True
             st.rerun()
-    # st.markdown("</div>", unsafe_allow_html=True) # HTML 래퍼 오류로 제거
 
     # 페이지네이션: st.radio (horizontal)
     MAX_VISIBLE_BUTTONS = 5
@@ -313,16 +301,15 @@ with list_col:
     # 현재 선택값
     current_label = str(st.session_state.page + 1)
     if current_label not in labels:
-        # 현재 페이지가 바뀐 라벨 목록에 없으면(예: 마지막 페이지에서 검색 등으로 곡 수가 줄었을 때) 첫 페이지로 이동
         current_label = labels[0] if labels else "1"
 
     st.markdown("<div class='pager'>", unsafe_allow_html=True)
     chosen = st.radio(
-        "pages", # 라벨은 CSS로 숨김
+        label=" ", # ✅ "pages" 글씨를 아예 빈칸으로 삭제해버렸습니다!
         options=labels,
         index=labels.index(current_label) if labels else 0,
         horizontal=True,
-        label_visibility="collapsed", # 기본 숨김
+        label_visibility="collapsed",
         key="pager_radio",
     )
     st.markdown("</div>", unsafe_allow_html=True)
