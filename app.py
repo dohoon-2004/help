@@ -32,7 +32,6 @@ def yt_embed(video_id: str, title: str):
       ></iframe>
     </div>
     """
-    # ✅ 요청하신 대로 높이를 190으로 줄였습니다.
     components.html(html, height=190)
 
 def check_icon(is_selected: bool) -> str:
@@ -50,7 +49,7 @@ header {visibility: hidden;}
 [data-testid="stAppViewContainer"] { background: #0f1014; }
 .block-container { padding-top: 1.0rem; padding-bottom: 0.8rem; max-width: 1200px; }
 
-/* ✅ 상단 글귀 사이즈 (font-size 값을 원하시는 대로 조절하세요) */
+/* 상단 글귀 사이즈 */
 .headline{
   font-size: 2.2rem; 
   font-weight: 800;
@@ -75,12 +74,12 @@ header {visibility: hidden;}
   border: 0;
 }
 
-/* ✅ 플레이어 바로 아래 텍스트 (위로 끌어올림) */
+/* 플레이어 바로 아래 텍스트 */
 .song-title{
   font-size: 1.45rem;
   font-weight: 700;
   letter-spacing: -0.4px;
-  margin-top: -1.0rem;    /* 높이를 190으로 맞췄으므로 이 정도 음수면 딱 맞습니다 */
+  margin-top: -1.0rem;   
   position: relative; 
   z-index: 10;
   color: rgba(255,255,255,0.92);
@@ -95,25 +94,24 @@ header {visibility: hidden;}
   color: rgba(255,255,255,0.70);
 }
 
-/* 1. 리스트 박스 크기 키우기 */
+/* 리스트 박스 크기 키우기 */
 .list-row{
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 95px;       /* 👈 박스 높이를 넉넉하게 키움 */
-  padding: 16px 20px;     /* 👈 안쪽 여백도 넓게 조정 */
+  min-height: 95px;       
+  padding: 16px 20px;     
   border-radius: 18px;
   background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.12);
-  margin-bottom: -15px;   /* 👈 버튼이 박스 위로 겹칠 수 있도록 아래 공간을 당김 */
+  margin-bottom: -15px;   
 }
 
-/* 2. 텍스트가 버튼을 가리지 않게 너비 제한 */
+/* 텍스트가 버튼을 가리지 않게 너비 제한 */
 .list-text{
   width: 75%; 
 }
 
-/* 글씨도 박스 크기에 맞게 살짝 키웠습니다 */
 .list-title{
   font-size: 1.15rem;
   font-weight: 900;
@@ -128,10 +126,10 @@ header {visibility: hidden;}
   line-height: 1.2;
 }
 
-/* 3. 체크 버튼을 박스 안(위)으로 강제로 끌어올리기 */
+/* 체크 버튼을 박스 안(위)으로 강제로 끌어올리기 */
 .stButton {
-  margin-top: -72px;      /* 👈 이 수치로 버튼을 박스 안으로 끌어올림 */
-  margin-bottom: 25px;    /* 👈 다음 리스트 박스와의 간격 */
+  margin-top: -72px;      
+  margin-bottom: 25px;    
 }
 .stButton button{
   border-radius: 14px;
@@ -160,7 +158,6 @@ with player_col:
     current = next((s for s in SONGS if s["id"] == st.session_state.selected_id), None)
     if current:
         yt_embed(current["videoId"], current["title"])
-        # 플레이어 바로 밑에 제목/가수
         st.markdown(f"<div class='song-title'>{current['title']}</div>", unsafe_allow_html=True)
         st.markdown(f"<div class='song-artist'>{current['artist']}</div>", unsafe_allow_html=True)
 
@@ -187,6 +184,5 @@ with list_col:
         with btn_col_r:
             if st.button(check_icon(is_selected), key=f"pick_{song['id']}", use_container_width=True):
                 st.session_state.selected_id = song["id"]
-                # ✅ 노래를 바꿀 때마다 새로운 글귀로 변경
                 st.session_state.headline = random.choice(HEADLINES)
                 st.rerun()
