@@ -49,7 +49,7 @@ if st.session_state.get("scroll_to_top"):
     st.session_state.scroll_to_top = False
 
 # -----------------------------
-# CSS (모바일 100% 호환, 숫자 안 사라짐!)
+# CSS 
 # -----------------------------
 st.markdown(
     """
@@ -155,7 +155,10 @@ div[data-testid="stButton"] > button[kind="primary"] * {
 /* =========================================================
    ✅ 숫자 버튼 (st.radio) 중앙 정렬 & 숫자를 원 중앙에
    ========================================================= */
-div[data-testid="stRadio"] { margin-top: 10px; }
+div[data-testid="stRadio"] { 
+  margin-top: 10px; 
+  margin-bottom: 50px !important; /* 👈 숫자 버튼 크기 정도의 하단 여백 추가! */
+}
 
 /* 라디오 버튼 그룹 가로 중앙 정렬 */
 div[data-testid="stRadio"] [role="radiogroup"] {
@@ -197,7 +200,7 @@ div[data-testid="stRadio"] input[type="radio"] {
   cursor: pointer !important;
 }
 
-/* ✅ 텍스트와 배경이 들어가는 실제 원형 박스 (이게 숫자를 담는 그릇입니다) */
+/* 텍스트와 배경이 들어가는 실제 원형 박스 (이게 숫자를 담는 그릇입니다) */
 div[data-testid="stRadio"] label > div:last-child {
   position: absolute !important;
   inset: 0 !important;
@@ -207,9 +210,9 @@ div[data-testid="stRadio"] label > div:last-child {
   padding: 0 !important;
   display: flex !important;
   align-items: center !important;
-  justify-content: center !important; /* 숫자 완벽한 중앙 정렬 */
+  justify-content: center !important; 
   border-radius: 50% !important;
-  background: var(--card) !important; /* 기본 배경색 */
+  background: var(--card) !important; 
   border: 1px solid var(--border) !important;
   z-index: 1 !important;
   box-sizing: border-box !important;
@@ -308,9 +311,8 @@ with list_col:
     if current_label not in labels:
         current_label = labels[0] if labels else "1"
 
-    # ✅ "pages" 글씨는 label_visibility="collapsed" 옵션으로 HTML 렌더링 자체를 막았습니다.
     chosen = st.radio(
-        label="",
+        label="pagination",
         options=labels,
         index=labels.index(current_label) if labels else 0,
         horizontal=True,
