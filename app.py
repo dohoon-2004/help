@@ -39,7 +39,6 @@ def yt_embed(video_id: str, title: str):
       ></iframe>
     </div>
     """
-    # 모바일 공백 최소화
     components.html(html, height=190)
 
 st.set_page_config(page_title="player", page_icon="🎧", layout="wide")
@@ -62,7 +61,14 @@ st.markdown(
   display: none !important;
 }
 
-/* ---------- theme variables ---------- */
+/* =========================================================
+   ✅ 모바일 브라우저의 '강제 다크모드(색 반전)' 엔진 원천 차단
+   ========================================================= */
+html {
+  color-scheme: light dark !important; 
+}
+
+/* ---------- 다크/라이트 모드 테마 변수 ---------- */
 :root{
   --bg: #ffffff;
   --card: #f8fafc;
@@ -75,15 +81,25 @@ st.markdown(
   --page-grad: linear-gradient(135deg, #0ea5e9, #06b6d4);
 }
 
-/* Streamlit dark theme (여러 버전 대비) */
-html[data-theme="dark"], body[data-theme="dark"], .stApp[data-theme="dark"],
-html.dark, body.dark, .stApp.dark{
-  --bg: #0f1014;
-  --card: rgba(255,255,255,0.06);
-  --border: rgba(255,255,255,0.14);
-  --text: rgba(255,255,255,0.95);
-  --muted: rgba(255,255,255,0.65);
-  --shadow: 0 12px 34px rgba(0,0,0,0.25);
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1014;
+    --card: rgba(255,255,255,0.06);
+    --border: rgba(255,255,255,0.14);
+    --text: rgba(255,255,255,0.95);
+    --muted: rgba(255,255,255,0.65);
+    --shadow: 0 12px 34px rgba(0,0,0,0.25);
+  }
+}
+
+/* Streamlit이 생성하는 다크모드 DOM에도 변수 덮어씌우기 (어떤 환경이든 완벽 적용) */
+[data-theme="dark"], html.dark, body.dark, .stApp.dark {
+  --bg: #0f1014 !important;
+  --card: rgba(255,255,255,0.06) !important;
+  --border: rgba(255,255,255,0.14) !important;
+  --text: rgba(255,255,255,0.95) !important;
+  --muted: rgba(255,255,255,0.65) !important;
+  --shadow: 0 12px 34px rgba(0,0,0,0.25) !important;
 }
 
 html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
@@ -95,23 +111,25 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
   max-width: 1200px;
 }
 
-/* ---------- headline ---------- */
+/* =========================================================
+   ✅ 글귀 정중앙 정렬 추가
+   ========================================================= */
 .headline{
   font-size: 2.2rem;
   font-weight: 900;
   letter-spacing: -0.6px;
   margin: 0.2rem 0 0.4rem 0;
   color: var(--text) !important;
+  text-align: center !important; /* 👈 완벽한 가운데 정렬 */
 }
 
-/* ---------- player ---------- */
 .yt-wrap{
   position: relative;
   padding-top: 56.25%;
   border-radius: 18px;
   overflow: hidden;
   background: #000;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow) !important;
 }
 .yt-wrap iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
 
@@ -119,11 +137,13 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
   margin-top: 0.5rem;
   margin-bottom: 1.8rem;
 }
-.song-title{ font-size: 1.65rem; font-weight: 800; color: var(--text); margin:0; }
-.song-artist{ font-size: 1.40rem; font-weight: 600; color: var(--muted); margin:0.2rem 0 0 0; }
+.song-title{ font-size: 1.65rem; font-weight: 800; color: var(--text) !important; margin:0; }
+.song-artist{ font-size: 1.40rem; font-weight: 600; color: var(--muted) !important; margin:0.2rem 0 0 0; }
 
-/* ---------- song list button (st.button) ---------- */
-.songlist div[data-testid="stButton"] > button{
+/* =========================================================
+   ✅ 노래 목록 버튼 (핑크/보라 유지)
+   ========================================================= */
+div[data-testid="stButton"] > button {
   width: 100%;
   text-align: center;
   border-radius: 16px !important;
@@ -136,101 +156,102 @@ html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
   font-size: 0.95rem;
   font-weight: 650;
 }
-.songlist div[data-testid="stButton"] > button p{ color: var(--muted) !important; }
-.songlist div[data-testid="stButton"] > button::first-line,
-.songlist div[data-testid="stButton"] > button p::first-line{
+div[data-testid="stButton"] > button p { color: var(--muted) !important; }
+div[data-testid="stButton"] > button::first-line,
+div[data-testid="stButton"] > button p::first-line {
   font-size: 1.25rem !important;
   font-weight: 850 !important;
   color: var(--text) !important;
 }
 
-/* 선택된 노래만 색칠 (올려주신 방식 그대로) */
-.songlist div[data-testid="stButton"] > button[kind="primary"]{
+div[data-testid="stButton"] > button[kind="primary"] {
   background: var(--song-grad) !important;
   border: none !important;
   box-shadow: 0 8px 18px rgba(236,72,153,0.25) !important;
 }
-.songlist div[data-testid="stButton"] > button[kind="primary"] *{
+div[data-testid="stButton"] > button[kind="primary"] * {
   color: #ffffff !important;
 }
 
-/* ---------- pager (st.radio horizontal) ---------- */
-.pager { 
+/* =========================================================
+   ✅ 숫자 버튼 (st.radio) 중앙 정렬 & 숫자를 원 중앙에
+   ========================================================= */
+div[data-testid="stRadio"] { 
   margin-top: 10px; 
-  margin-bottom: 50px !important; /* ✅ 숫자버튼 크기(50px) 정도의 여백 추가! */
+  margin-bottom: 50px !important; 
 }
 
-/* 'pages' 라벨 완벽 숨김 */
-div[data-testid="stRadio"] > label {
-  display: none !important;
-}
-
-.pager [role="radiogroup"]{
-  display:flex !important;
-  gap: 12px !important;            
-  justify-content: center !important;
+div[data-testid="stRadio"] [role="radiogroup"] {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important; 
+  gap: 12px !important;
   flex-wrap: nowrap !important;
+  width: 100% !important;
 }
 
-/* 라디오 항목을 원형 버튼처럼 - 완벽 중앙 정렬 */
-.pager label{
-  margin: 0 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  position: relative !important;
+div[data-testid="stRadio"] label {
   width: 48px !important;
   height: 48px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  position: relative !important;
   cursor: pointer !important;
+  border: none !important;
+  background: transparent !important;
 }
 
-/* 라디오 기본 점 숨김 */
-.pager label > div:first-child {
+div[data-testid="stRadio"] label > div:first-of-type {
   display: none !important;
 }
 
-/* 실제 동그라미 버튼 모양 (배경) */
-.pager input[type="radio"]{
-  appearance: none !important;
-  -webkit-appearance: none !important;
+div[data-testid="stRadio"] input[type="radio"] {
   position: absolute !important;
   inset: 0 !important;
   width: 100% !important;
   height: 100% !important;
-  border-radius: 50% !important;
-  border: 1px solid var(--border) !important;
-  background: var(--card) !important;
+  opacity: 0 !important; 
   margin: 0 !important;
-  box-sizing: border-box !important;
+  z-index: 10 !important;
   cursor: pointer !important;
-  z-index: 1 !important;
 }
 
-/* 숫자 텍스트 - 정중앙에 고정! */
-.pager label > div:last-child,
-.pager label span {
-  position: relative !important;
-  z-index: 10 !important; /* 배경 위에 뜨도록 */
-  pointer-events: none !important;
+div[data-testid="stRadio"] label > div:last-child {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important; 
+  border-radius: 50% !important;
+  background: var(--card) !important; 
+  border: 1px solid var(--border) !important;
+  z-index: 1 !important;
+  box-sizing: border-box !important;
+  transition: all 0.2s !important;
+}
+
+div[data-testid="stRadio"] label p {
   font-size: 1.25rem !important;
   font-weight: 850 !important;
   color: var(--text) !important;
   margin: 0 !important;
   padding: 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  line-height: 1 !important;
 }
 
-/* 선택된 페이지: 파랑/하늘 그라데이션 (올려주신 방식 그대로) */
-.pager input[type="radio"]:checked{
+/* 선택된 숫자 버튼 색상 변경 (모바일 호환 100%) */
+div[data-testid="stRadio"] input[type="radio"]:checked ~ div:last-child {
   background: var(--page-grad) !important;
   border: none !important;
-  box-shadow: 0 8px 18px rgba(14,165,233,0.25) !important;
+  box-shadow: 0 6px 15px rgba(14,165,233,0.3) !important;
 }
-.pager input[type="radio"]:checked ~ div,
-.pager input[type="radio"]:checked ~ div span,
-.pager input[type="radio"]:checked ~ span {
+
+div[data-testid="stRadio"] input[type="radio"]:checked ~ div:last-child p {
   color: #ffffff !important;
 }
 </style>
@@ -274,8 +295,7 @@ with list_col:
     end_idx = start_idx + ITEMS_PER_PAGE
     current_songs = SONGS[start_idx:end_idx]
 
-    # 노래 목록 wrapper
-    st.markdown("<div class='songlist'>", unsafe_allow_html=True)
+    # 노래 목록
     for song in current_songs:
         is_selected = (song["id"] == st.session_state.selected_id)
         btn_type = "primary" if is_selected else "secondary"
@@ -285,7 +305,6 @@ with list_col:
             st.session_state.headline = random.choice(HEADLINES)
             st.session_state.scroll_to_top = True
             st.rerun()
-    st.markdown("</div>", unsafe_allow_html=True)
 
     # 페이지네이션: st.radio (horizontal)
     MAX_VISIBLE_BUTTONS = 5
@@ -301,22 +320,21 @@ with list_col:
     # 현재 선택값
     current_label = str(st.session_state.page + 1)
     if current_label not in labels:
-        current_label = labels[0]
+        current_label = labels[0] if labels else "1"
 
-    st.markdown("<div class='pager'>", unsafe_allow_html=True)
     chosen = st.radio(
-        label=" ", # ✅ "pages" 글씨를 아예 빈칸으로 비워버림
+        label="pagination",
         options=labels,
-        index=labels.index(current_label),
+        index=labels.index(current_label) if labels else 0,
         horizontal=True,
-        label_visibility="collapsed",
+        label_visibility="collapsed", 
         key="pager_radio",
     )
-    st.markdown("</div>", unsafe_allow_html=True)
 
-    new_page = int(chosen) - 1
-    if new_page != st.session_state.page:
-        st.session_state.page = new_page
-        st.session_state.headline = random.choice(HEADLINES)
-        st.session_state.scroll_to_top = True
-        st.rerun()
+    if labels:
+        new_page = int(chosen) - 1
+        if new_page != st.session_state.page:
+            st.session_state.page = new_page
+            st.session_state.headline = random.choice(HEADLINES)
+            st.session_state.scroll_to_top = True
+            st.rerun()
