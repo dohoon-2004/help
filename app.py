@@ -1,9 +1,10 @@
+import math
 import random
 import streamlit as st
 import streamlit.components.v1 as components
 
 # -----------------------------
-# 노래 목록 (괄호 및 괄호 안 내용 모두 제거)
+# 노래 목록
 # -----------------------------
 SONGS = [
     {"id": "river-flows-in-you", "title": "River Flows in You", "artist": "Yiruma", "videoId": "7maJOI3QMu0"},
@@ -12,11 +13,10 @@ SONGS = [
     {"id": "stronger", "title": "Stronger", "artist": "Kelly Clarkson", "videoId": "Xn676-fLq7I"},
     {"id": "blackpink-ddu-du-ddu-du", "title": "DDU-DU DDU-DU", "artist": "BLACKPINK", "videoId": "IHNzOHi8sJs"},
     {"id": "sia-unstoppable", "title": "Unstoppable", "artist": "Sia", "videoId": "kIjUfXfJjGU"},
-    {"id": "iu-blueming", "title": "Blueming", "artist": "아이유(IU)", "videoId": "D1PvIWdJ8xo"},
-    {"id": "iu-celebrity", "title": "Celebrity", "artist": "아이유(IU)", "videoId": "0-q1KafFCLU"},
-    {"id": "akmu-200-percent", "title": "200%", "artist": "AKMU(악동뮤지션)", "videoId": "0Oi8jDMvd_w"},
-    {"id": "bol4-hug", "title": "Hug (품)", "artist": "볼빨간사춘기(BOL4)", "videoId": "qfeoX17dav0"},
-
+    {"id": "iu-blueming", "title": "Blueming", "artist": "아이유", "videoId": "D1PvIWdJ8xo"},
+    {"id": "iu-celebrity", "title": "Celebrity", "artist": "아이유", "videoId": "0-q1KafFCLU"},
+    {"id": "akmu-200-percent", "title": "200%", "artist": "AKMU", "videoId": "0Oi8jDMvd_w"},
+    {"id": "bol4-hug", "title": "Hug", "artist": "볼빨간사춘기", "videoId": "qfeoX17dav0"},
 ]
 
 # 상단 글귀
@@ -73,29 +73,38 @@ header {visibility: hidden;}
   border: 0;
 }
 
-/* ✅ 플레이어 아래 텍스트 (가운데 정렬 적용) */
+/* ✅ 플레이어 아래 텍스트 박스 (강제 중앙 정렬을 위한 Flexbox 도입) */
+.song-info-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;      /* 가로축 정중앙 */
+  justify-content: center;
+  width: 100%;              /* 좌우 넓이를 끝까지 채움 */
+  margin-top: 0.5rem;
+  margin-bottom: 3.5rem;
+}
 .song-title{
   font-size: 1.45rem;
   font-weight: 700;
   letter-spacing: -0.4px;
-  margin-top: 0.25rem;
   color: rgba(255,255,255,0.92);
-  text-align: center; /* 👈 가운데 정렬 */
+  text-align: center;
+  margin: 0;
 }
 .song-artist{
   font-size: 1.40rem;
   font-weight: 600;
   letter-spacing: -0.4px;
-  margin-top: 0.05rem;
-  margin-bottom: 3.5rem; 
+  margin-top: 0.2rem;
   color: rgba(255,255,255,0.70);
-  text-align: center; /* 👈 가운데 정렬 */
+  text-align: center;
+  margin-bottom: 0;
 }
 
-/* 글래스모피즘 느낌 버튼 */
+/* 글래스모피즘 느낌 버튼 (박스 안 텍스트 정가운데 정렬) */
 div[data-testid="stButton"] > button {
   width: 100%;
-  text-align: left;
+  text-align: center;  
   border-radius: 16px;
   padding: 18px 22px;
   background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
@@ -143,17 +152,30 @@ div[data-testid="stButton"] > button[kind="primary"] p::first-line {
 }
 
 div[data-testid="stButton"] > button:focus:not(:active) { border-color: inherit !important; box-shadow: inherit !important; }
+
+/* 페이지 표시 텍스트 디자인 */
+.page-indicator {
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.7);
+  margin-top: 18px;
+}
 </style>
 """,
     unsafe_allow_html=True,
 )
 
-# 상태
+# 상태 초기화
 if "selected_id" not in st.session_state:
     st.session_state.selected_id = SONGS[0]["id"] if SONGS else None
 
 if "headline" not in st.session_state:
     st.session_state.headline = random.choice(HEADLINES)
+
+# 페이지네이션용 상태 (0페이지부터 시작)
+if "page" not in st.session_state:
+    st.session_state.page = 0
 
 st.markdown(f"<div class='headline'>{st.session_state.headline}</div>", unsafe_allow_html=True)
 
@@ -163,11 +185,28 @@ with player_col:
     current = next((s for s in SONGS if s["id"] == st.session_state.selected_id), None)
     if current:
         yt_embed(current["videoId"], current["title"])
-        st.markdown(f"<div class='song-title'>{current['title']}</div>", unsafe_allow_html=True)
-        st.markdown(f"<div class='song-artist'>{current['artist']}</div>", unsafe_allow_html=True)
+        # ✅ 하나의 박스에 묶어서 가운데 정렬 시킴
+        st.markdown(
+            f"""
+            <div class='song-info-box'>
+              <div class='song-title'>{current['title']}</div>
+              <div class='song-artist'>{current['artist']}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
 with list_col:
-    for song in SONGS:
+    # 5개씩 자르기 (페이지네이션)
+    ITEMS_PER_PAGE = 5
+    total_pages = math.ceil(len(SONGS) / ITEMS_PER_PAGE)
+    
+    start_idx = st.session_state.page * ITEMS_PER_PAGE
+    end_idx = start_idx + ITEMS_PER_PAGE
+    current_songs = SONGS[start_idx:end_idx]
+
+    # 현재 페이지의 노래 버튼 렌더링
+    for song in current_songs:
         is_selected = (song["id"] == st.session_state.selected_id)
         btn_type = "primary" if is_selected else "secondary"
         
@@ -175,3 +214,22 @@ with list_col:
             st.session_state.selected_id = song["id"]
             st.session_state.headline = random.choice(HEADLINES)
             st.rerun()
+
+    # 이전 / 다음 페이지 버튼 영역
+    st.markdown("<br>", unsafe_allow_html=True)
+    prev_col, page_col, next_col = st.columns([1, 1, 1])
+    
+    with prev_col:
+        if st.session_state.page > 0:
+            if st.button("⬅️ 이전", key="prev_btn", use_container_width=True):
+                st.session_state.page -= 1
+                st.rerun()
+                
+    with page_col:
+        st.markdown(f"<div class='page-indicator'>{st.session_state.page + 1} / {total_pages}</div>", unsafe_allow_html=True)
+        
+    with next_col:
+        if st.session_state.page < total_pages - 1:
+            if st.button("다음 ➡️", key="next_btn", use_container_width=True):
+                st.session_state.page += 1
+                st.rerun()
