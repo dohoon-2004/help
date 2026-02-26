@@ -73,13 +73,13 @@ header {visibility: hidden;}
   border: 0;
 }
 
-/* ✅ 플레이어 아래 텍스트 박스 (강제 중앙 정렬을 위한 Flexbox 도입) */
+/* 플레이어 아래 텍스트 박스 (왼쪽 정렬) */
 .song-info-box {
   display: flex;
   flex-direction: column;
-  align-items: center;      /* 가로축 정중앙 */
+  align-items: flex-start;
   justify-content: center;
-  width: 100%;              /* 좌우 넓이를 끝까지 채움 */
+  width: 100%;              
   margin-top: 0.5rem;
   margin-bottom: 3.5rem;
 }
@@ -88,7 +88,7 @@ header {visibility: hidden;}
   font-weight: 700;
   letter-spacing: -0.4px;
   color: rgba(255,255,255,0.92);
-  text-align: center;
+  text-align: left;
   margin: 0;
 }
 .song-artist{
@@ -97,14 +97,14 @@ header {visibility: hidden;}
   letter-spacing: -0.4px;
   margin-top: 0.2rem;
   color: rgba(255,255,255,0.70);
-  text-align: center;
+  text-align: left;
   margin-bottom: 0;
 }
 
-/* 글래스모피즘 느낌 버튼 (박스 안 텍스트 정가운데 정렬) */
+/* 글래스모피즘 느낌 버튼 (박스 안 텍스트는 정가운데 유지) */
 div[data-testid="stButton"] > button {
   width: 100%;
-  text-align: center;  
+  text-align: center;
   border-radius: 16px;
   padding: 18px 22px;
   background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.01));
@@ -185,7 +185,6 @@ with player_col:
     current = next((s for s in SONGS if s["id"] == st.session_state.selected_id), None)
     if current:
         yt_embed(current["videoId"], current["title"])
-        # ✅ 하나의 박스에 묶어서 가운데 정렬 시킴
         st.markdown(
             f"""
             <div class='song-info-box'>
@@ -221,7 +220,8 @@ with list_col:
     
     with prev_col:
         if st.session_state.page > 0:
-            if st.button("⬅️ 이전", key="prev_btn", use_container_width=True):
+            # ✅ 화살표 지우고 영어(Prev)로 변경
+            if st.button("Prev", key="prev_btn", use_container_width=True):
                 st.session_state.page -= 1
                 st.rerun()
                 
@@ -230,6 +230,7 @@ with list_col:
         
     with next_col:
         if st.session_state.page < total_pages - 1:
-            if st.button("다음 ➡️", key="next_btn", use_container_width=True):
+            # ✅ 화살표 지우고 영어(Next)로 변경
+            if st.button("Next", key="next_btn", use_container_width=True):
                 st.session_state.page += 1
                 st.rerun()
