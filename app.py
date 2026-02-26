@@ -41,7 +41,14 @@ st.set_page_config(page_title="player", page_icon="🎧", layout="wide")
 st.markdown(
     """
 <style>
-/* ✅ Streamlit 기본 잡동사니 완벽 제거 */
+/* ✅ 최고급 웹 폰트 'Pretendard' 불러오기 */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v3.2.1/dist/web/static/pretendard.css");
+
+* {
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif !important;
+}
+
+/* Streamlit 기본 잡동사니 완벽 제거 */
 #MainMenu {visibility: hidden !important;}
 footer {visibility: hidden !important;}
 header {visibility: hidden !important;}
@@ -49,7 +56,10 @@ header {visibility: hidden !important;}
 [data-testid="stToolbar"] {display: none !important;}
 [data-testid="stHeader"] {display: none !important;}
 
-[data-testid="stAppViewContainer"] { background: #0f1014; }
+/* ✅ 전체 배경색을 오묘하고 세련된 다크 그라데이션으로 변경 */
+[data-testid="stAppViewContainer"] { 
+  background: linear-gradient(135deg, #0b0c10 0%, #1a1e26 100%); 
+}
 .block-container { padding-top: 1.0rem; padding-bottom: 0.8rem; max-width: 1200px; }
 
 /* 상단 글귀 */
@@ -69,7 +79,7 @@ header {visibility: hidden !important;}
   border-radius: 18px;
   overflow: hidden;
   background: #000;
-  box-shadow: 0 12px 34px rgba(0,0,0,0.25);
+  box-shadow: 0 12px 34px rgba(0,0,0,0.3);
 }
 .yt-wrap iframe{
   position: absolute; inset: 0;
@@ -87,25 +97,27 @@ header {visibility: hidden !important;}
   margin-top: 0.5rem;
   margin-bottom: 3.5rem;
 }
+
+/* ✅ 플레이어 밑 제목 크기 살짝 키움 (1.45rem -> 1.55rem) */
 .song-title{
-  font-size: 1.45rem;
+  font-size: 1.55rem;
   font-weight: 700;
   letter-spacing: -0.4px;
-  color: rgba(255,255,255,0.92);
+  color: rgba(255,255,255,0.95);
   text-align: left;
   margin: 0;
 }
 .song-artist{
   font-size: 1.40rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: -0.4px;
   margin-top: 0.2rem;
-  color: rgba(255,255,255,0.70);
+  color: rgba(255,255,255,0.65);
   text-align: left;
   margin-bottom: 0;
 }
 
-/* 글래스모피즘 느낌 버튼 */
+/* 목록 버튼 공통 (글래스모피즘) */
 div[data-testid="stButton"] > button {
   width: 100%;
   text-align: center;
@@ -124,7 +136,7 @@ div[data-testid="stButton"] > button {
   line-height: 1.6;
 }
 
-/* 첫 번째 줄 분리 */
+/* 목록 첫 번째 줄(제목) */
 div[data-testid="stButton"] > button::first-line,
 div[data-testid="stButton"] > button p::first-line {
   font-size: 1.25rem;
@@ -138,11 +150,10 @@ div[data-testid="stButton"] > button[kind="secondary"]:hover {
   background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.03));
   border-color: rgba(255,255,255,0.25);
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
   color: rgba(255,255,255,0.65) !important;
 }
 
-/* 선택된 버튼 하이라이트 (현재 페이지 버튼도 이 색깔 적용됨) */
+/* 선택된 버튼 하이라이트 */
 div[data-testid="stButton"] > button[kind="primary"] {
   background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.25)) !important;
   border: 1px solid rgba(168, 85, 247, 0.5) !important;
@@ -157,9 +168,41 @@ div[data-testid="stButton"] > button[kind="primary"] p::first-line {
 
 div[data-testid="stButton"] > button:focus:not(:active) { border-color: inherit !important; box-shadow: inherit !important; }
 
-/* 숫자 버튼들 간격 조절용 (여백 제거) */
-.css-1r6slb0, .css-1n76uvr {
-  gap: 0.5rem;
+/* =========================================
+   ✅ 모바일 페이지네이션 무조건 한 줄로 강제 고정 
+   ========================================= */
+.pagination-marker + div[data-testid="stHorizontalBlock"] {
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    margin-top: 10px;
+}
+.pagination-marker + div[data-testid="stHorizontalBlock"] > div[data-testid="column"] {
+    width: auto !important;
+    min-width: 0 !important;
+    flex: 0 1 auto !important;
+}
+
+/* 페이지네이션 전용 버튼 디자인 (목록 버튼 디자인 무시하고 동그랗게) */
+.pagination-marker + div[data-testid="stHorizontalBlock"] div[data-testid="stButton"] > button {
+    padding: 8px 16px !important;
+    border-radius: 12px !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    min-height: 0 !important;
+    transform: none !important; /* 떠오르는 효과 제거 */
+}
+.pagination-marker + div[data-testid="stHorizontalBlock"] div[data-testid="stButton"] > button[kind="primary"] {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.6), rgba(168, 85, 247, 0.6)) !important;
+    border-color: rgba(255,255,255,0.3) !important;
+    color: white !important;
+}
+.pagination-marker + div[data-testid="stHorizontalBlock"] div[data-testid="stButton"] > button::first-line {
+    font-size: 1.1rem !important;
 }
 </style>
 """,
@@ -173,7 +216,6 @@ if "selected_id" not in st.session_state:
 if "headline" not in st.session_state:
     st.session_state.headline = random.choice(HEADLINES)
 
-# 페이지네이션용 상태
 if "page" not in st.session_state:
     st.session_state.page = 0
 
@@ -214,16 +256,14 @@ with list_col:
             st.session_state.headline = random.choice(HEADLINES)
             st.rerun()
 
-    # ✅ 숫자 페이지네이션 (예: 1 2 3)
-    st.markdown("<br>", unsafe_allow_html=True)
+    # ✅ 모바일에서도 한 줄로 유지되도록 돕는 CSS 마커 삽입
+    st.markdown('<div class="pagination-marker"></div>', unsafe_allow_html=True)
     
-    # 숫자 버튼들이 정가운데 오도록 양옆에 빈 여백(spacer) 컬럼 배치
-    layout = [1.5] + [1] * total_pages + [1.5]
-    cols = st.columns(layout)
+    # 1, 2 버튼 배치
+    cols = st.columns(total_pages)
     
     for i in range(total_pages):
-        with cols[i + 1]:
-            # 현재 머물고 있는 페이지 번호는 보라색(primary)으로 하이라이트
+        with cols[i]:
             btn_type = "primary" if st.session_state.page == i else "secondary"
             if st.button(str(i + 1), key=f"page_btn_{i}", use_container_width=True, type=btn_type):
                 st.session_state.page = i
