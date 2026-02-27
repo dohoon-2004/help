@@ -56,7 +56,6 @@ st.markdown(
 <style>
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v3.2.1/dist/web/static/pretendard.css");
 
-/* Streamlit 기본 UI 숨김 */
 #MainMenu, footer, header, .stAppDeployButton, [data-testid="stToolbar"], [data-testid="stHeader"] {
   display: none !important;
 }
@@ -74,7 +73,7 @@ html, body {
 }
 
 /* =========================================================
-   ✅ 테마 변수 (라이트 모드 글자색: '검정' 금지 → 네이비/슬레이트 톤)
+   ✅ 테마 변수: 글자색 "아예 다른 톤" (보라/라벤더 계열)
    ========================================================= */
 :root{
   color-scheme: light;
@@ -82,9 +81,9 @@ html, body {
   --card: #f8fafc;
   --border: #e2e8f0;
 
-  /* ✅ 검정 대신: 살짝 컬러감 있는 네이비(가독성 유지) */
-  --text: #273552;     /* navy-slate */
-  --muted: #60708d;
+  /* ✅ 검정/네이비 느낌 버리고, 보라 톤 */
+  --text: #4c2a8a;    /* deep purple */
+  --muted: #7b5fb5;   /* purple-muted */
 
   --shadow: 0 12px 34px rgba(0,0,0,0.12);
 
@@ -98,8 +97,11 @@ html, body {
     --bg: #0f1014;
     --card: #171a22;
     --border: #2a2f3a;
-    --text: #f1f5f9;
-    --muted: #aab2c2;
+
+    /* ✅ 다크에서는 라벤더 계열로 */
+    --text: #f3e8ff;
+    --muted: #d2c2ff;
+
     --shadow: 0 12px 34px rgba(0,0,0,0.35);
   }
 }
@@ -109,12 +111,12 @@ html, body {
   --bg: #0f1014 !important;
   --card: #171a22 !important;
   --border: #2a2f3a !important;
-  --text: #f1f5f9 !important;
-  --muted: #aab2c2 !important;
+  --text: #f3e8ff !important;
+  --muted: #d2c2ff !important;
   --shadow: 0 12px 34px rgba(0,0,0,0.35) !important;
 }
 
-/* 전역 색상 고정 */
+/* 전역 색상 */
 html, body, .stApp, [data-testid="stAppViewContainer"], .block-container{
   background: var(--bg) !important;
   color: var(--text) !important;
@@ -129,7 +131,7 @@ h1, h2, h3, h4, h5, h6,
 /* 레이아웃 */
 .block-container{
   padding-top: 0.2rem !important;
-  padding-bottom: 0.8rem;
+  padding-bottom: 0.6rem !important;
   max-width: 1200px;
 }
 
@@ -138,8 +140,8 @@ h1, h2, h3, h4, h5, h6,
   font-size: clamp(1.6rem, 5vw, 2.0rem) !important;
   font-weight: 900;
   letter-spacing: -0.6px;
-  margin: 0.2rem 0 1.5rem 0 !important;
-  text-align: center !important; 
+  margin: 0.15rem 0 1.0rem 0 !important;
+  text-align: center !important;
 }
 
 /* 유튜브 */
@@ -154,35 +156,32 @@ h1, h2, h3, h4, h5, h6,
 .yt-wrap iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
 
 /* =========================================================
-   ✅ "플레이어 바로 밑에 제목" 만들기: Streamlit iframe 블록 여백 강제 축소
+   ✅ 플레이어 바로 밑에 제목: iframe 아래 여백 더 줄이기
    ========================================================= */
-/* components.html(iframe) 아래 기본 마진/패딩을 최대한 없애고, 아래 요소를 끌어올립니다 */
 div[data-testid="stIFrame"]{
-  margin-bottom: -14px !important;   /* ✅ 여백 거의 제거(필요시 -10~-18 사이 조정) */
+  margin-bottom: -20px !important;  /* ✅ 더 바짝 */
   padding-bottom: 0 !important;
 }
-div[data-testid="stIFrame"] iframe{
-  display: block !important;
-}
+div[data-testid="stIFrame"] iframe{ display:block !important; }
 
 /* 플레이어 아래 텍스트 */
 .song-info{
-  margin-top: -0.55rem !important;   /* ✅ 플레이어-제목 간격 극단적으로 축소 */
-  margin-bottom: 1.8rem;
-  padding-left: 10px !important;     /* ✅ 살짝 오른쪽 */
+  margin-top: -0.85rem !important; /* ✅ 더 바짝 */
+  margin-bottom: 1.2rem !important;
+  padding-left: 10px !important;
 }
-.song-title{ 
+.song-title{
   font-size: clamp(1.25rem, 3.6vw, 1.5rem) !important;
-  font-weight: 800; 
+  font-weight: 800;
   margin:0 !important;
-  line-height: 1.10 !important;
+  line-height: 1.08 !important;
 }
-.song-artist{ 
+.song-artist{
   font-size: clamp(1.05rem, 3.2vw, 1.25rem) !important;
-  font-weight: 600; 
+  font-weight: 650;
   color: var(--muted) !important;
-  margin:0.03rem 0 0 0 !important;
-  line-height: 1.10 !important;
+  margin:0.02rem 0 0 0 !important;
+  line-height: 1.08 !important;
 }
 
 /* 노래 목록 버튼 */
@@ -206,7 +205,6 @@ div[data-testid="stButton"] > button p::first-line {
   font-weight: 850 !important;
   color: var(--text) !important;
 }
-
 div[data-testid="stButton"] > button[kind="primary"] {
   background: var(--song-grad) !important;
   border: none !important;
@@ -218,105 +216,110 @@ div[data-testid="stButton"] > button[kind="primary"] * {
 }
 
 /* =========================================================
-   ✅ 페이지네이션(숫자 버튼)
-   - 그룹은 가운데 정렬 유지
-   - "앞 여백" 포함 좌우 여백 추가
-   - 숫자는 버튼(원) 가운데 정렬 유지
+   ✅ 페이지네이션: "작작 띄우기" (위/아래 간격 확 줄임)
    ========================================================= */
-div[data-testid="stRadio"] { 
-  margin-top: 10px; 
-  margin-bottom: 50px !important; 
+div[data-testid="stRadio"] {
+  margin-top: 6px !important;
+  margin-bottom: 10px !important; /* ✅ 50px -> 10px */
 }
 
+/* 라디오 그룹: 가운데 + 좌우 여백 */
 div[data-testid="stRadio"] [role="radiogroup"] {
   display: flex !important;
   flex-direction: row !important;
-  justify-content: center !important;   /* ✅ 가운데 정렬 */
+  justify-content: center !important;
   align-items: center !important;
 
   gap: 12px !important;
   flex-wrap: nowrap !important;
 
-  width: 100% !important;              /* ✅ 전체 폭에서 중앙 */
+  width: 100% !important;
   margin: 0 !important;
 
-  padding-left: 16px !important;       /* ✅ "앞 여백" (좌) */
-  padding-right: 16px !important;      /* ✅ 우측도 같이 (센터 유지 위해) */
+  padding-left: 14px !important;
+  padding-right: 14px !important;
   box-sizing: border-box !important;
 }
 
+/* =========================================================
+   ✅ 숫자 버튼 "안의 숫자" 정중앙 강제 (라벨 자체를 원형 버튼으로)
+   - Streamlit DOM이 바뀌어도 중앙정렬이 깨지지 않도록
+   ========================================================= */
 div[data-testid="stRadio"] label {
   width: 48px !important;
   height: 48px !important;
   margin: 0 !important;
   padding: 0 !important;
-  display: inline-flex !important;
+
   position: relative !important;
   cursor: pointer !important;
-  border: none !important;
-  background: transparent !important;
+
+  display: flex !important;
+  align-items: center !important;      /* ✅ 세로 중앙 */
+  justify-content: center !important;  /* ✅ 가로 중앙 */
+
+  border-radius: 999px !important;
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  box-sizing: border-box !important;
 }
 
-/* Streamlit 라디오 기본 동그라미 숨김 */
-div[data-testid="stRadio"] label > div:first-of-type { display: none !important; }
+/* 기본 라디오 표시(왼쪽 동그라미) 영역은 숨김 처리 */
+div[data-testid="stRadio"] label > div:first-child {
+  display: none !important;
+}
 
-/* 클릭 영역(라디오 input) */
+/* input은 클릭만 되게 */
 div[data-testid="stRadio"] input[type="radio"] {
   position: absolute !important;
   inset: 0 !important;
   width: 100% !important;
   height: 100% !important;
-  opacity: 0 !important; 
+  opacity: 0 !important;
   margin: 0 !important;
   z-index: 10 !important;
-  cursor: pointer !important;
 }
 
-/* ✅ 원(버튼) + 숫자 가운데 정렬 유지 */
-div[data-testid="stRadio"] label > div:last-child {
-  position: absolute !important;
-  inset: 0 !important;
+/* 텍스트 래퍼(환경별로 여러 div가 낄 수 있어 전부 중앙정렬 고정) */
+div[data-testid="stRadio"] label > div:last-child,
+div[data-testid="stRadio"] label [data-testid="stMarkdownContainer"],
+div[data-testid="stRadio"] label p {
   width: 100% !important;
   height: 100% !important;
+  margin: 0 !important;
 
   display: flex !important;
-  align-items: center !important;       /* ✅ 세로 가운데 */
-  justify-content: center !important;   /* ✅ 가로 가운데 */
-  border-radius: 50% !important;
-
-  background: var(--card) !important; 
-  border: 1px solid var(--border) !important;
-  box-sizing: border-box !important;
-  transition: all 0.2s !important;
-}
-
-div[data-testid="stRadio"] label p {
-  font-size: clamp(1.05rem, 3.2vw, 1.25rem) !important;
-  font-weight: 850 !important;
-  color: var(--text) !important;
-  margin: 0 !important;
+  align-items: center !important;      /* ✅ 세로 중앙 */
+  justify-content: center !important;  /* ✅ 가로 중앙 */
+  text-align: center !important;
   line-height: 1 !important;
 }
 
-/* 선택된 숫자 버튼 */
-div[data-testid="stRadio"] input[type="radio"]:checked ~ div:last-child {
+/* 숫자 글자 */
+div[data-testid="stRadio"] label p {
+  font-size: 1.15rem !important;
+  font-weight: 900 !important;
+  color: var(--text) !important;
+}
+
+/* 체크(선택) 상태: :has 지원 브라우저에서 가장 안정적 */
+div[data-testid="stRadio"] label:has(input[type="radio"]:checked) {
   background: var(--page-grad) !important;
   border: none !important;
   box-shadow: 0 6px 15px rgba(14,165,233,0.3) !important;
 }
-div[data-testid="stRadio"] input[type="radio"]:checked ~ div:last-child p {
+div[data-testid="stRadio"] label:has(input[type="radio"]:checked) p {
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
 }
 
-/* 모바일 미세 튜닝 */
+/* 모바일 튜닝 */
 @media (max-width: 520px) {
   .block-container{ padding-left: 0.8rem !important; padding-right: 0.8rem !important; }
-  /* 모바일에서 더 바짝 붙이기 */
-  div[data-testid="stIFrame"]{ margin-bottom: -16px !important; }
-  .song-info{ margin-top: -0.65rem !important; margin-bottom: 1.4rem !important; padding-left: 8px !important; }
-  div[data-testid="stButton"] > button { padding: 14px 16px !important; border-radius: 14px !important; }
-  div[data-testid="stRadio"] [role="radiogroup"] { padding-left: 12px !important; padding-right: 12px !important; }
+  div[data-testid="stIFrame"]{ margin-bottom: -22px !important; }
+  .song-info{ margin-top: -0.95rem !important; margin-bottom: 1.0rem !important; padding-left: 8px !important; }
+  div[data-testid="stRadio"] { margin-bottom: 8px !important; }
+  div[data-testid="stRadio"] [role="radiogroup"] { padding-left: 10px !important; padding-right: 10px !important; }
 }
 </style>
 """,
@@ -375,7 +378,7 @@ with list_col:
             st.session_state.scroll_to_top = True
             st.rerun()
 
-    # 페이지네이션: st.radio (horizontal)
+    # 페이지네이션
     MAX_VISIBLE_BUTTONS = 5
     half_window = MAX_VISIBLE_BUTTONS // 2
 
