@@ -4,9 +4,9 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 # -----------------------------
-# 노래 목록 (테스트용 30곡)
+# 노래 목록 (딱 기본 10곡만 출력)
 # -----------------------------
-BASE_SONGS = [
+SONGS = [
     {"id": "river-flows-in-you", "title": "River Flows in You", "artist": "Yiruma", "videoId": "7maJOI3QMu0"},
     {"id": "its-time", "title": "It's Time", "artist": "Imagine Dragons", "videoId": "NASqUELHjPE"},
     {"id": "iu-night-letter", "title": "밤편지", "artist": "아이유", "videoId": "EjMTw4xLcBI"},
@@ -17,13 +17,21 @@ BASE_SONGS = [
     {"id": "iu-celebrity", "title": "Celebrity", "artist": "아이유", "videoId": "0-q1KafFCLU"},
     {"id": "akmu-200-percent", "title": "200%", "artist": "AKMU", "videoId": "0Oi8jDMvd_w"},
     {"id": "bol4-hug", "title": "Hug", "artist": "볼빨간사춘기", "videoId": "qfeoX17dav0"},
+    {"id": "panic-high-hopes", "title": "High Hopes", "artist": "Panic! At The Disco", "videoId": "IPXIgEAGe4U"},
+    {"id": "fall-out-boy-immortals", "title": "Immortals", "artist": "Fall Out Boy", "videoId": "Y4o_8zbelwY"},
+    {"id": "alice-merton-no-roots", "title": "No Roots", "artist": "Alice Merton", "videoId": "PUdyuKaGQd4"},
+    {"id": "gaho-start", "title": "Start (시작)", "artist": "Gaho (가호)", "videoId": "kjYW63CVbsE"},
+    {"id": "eddy-kim-ippudanikka", "title": "이쁘다니까", "artist": "Eddy Kim(에디킴)", "videoId": "hvq5Q9yaCfo"},
+    {"id": "loveholics-butterfly", "title": "Butterfly", "artist": "러브홀릭스(Loveholics)", "videoId": "U93tNuQuREo"},
+    {"id": "koyote-our-dream", "title": "우리의 꿈", "artist": "코요태(Koyote)", "videoId": "zfP4Gh8Kquo"},
+    {"id": "turtles-airplane", "title": "비행기", "artist": "거북이(Turtles)", "videoId": "yCzg389Ut6w"},
+    {"id": "onerepublic-i-aint-worried", "title": "I Ain't Worried", "artist": "OneRepublic", "videoId": "INak4ORss18"},
+    {"id": "lizzo-juice", "title": "Juice", "artist": "Lizzo", "videoId": "hqL9MD2sDRw"},
+    {"id": "justin-timberlake-cant-stop-the-feeling", "title": "Can't Stop the Feeling!", "artist": "Justin Timberlake", "videoId": "0Ui-QzihJGo"},
+    {"id": "zico-soulmate", "title": "SoulMate (Feat. 아이유)", "artist": "지코(ZICO) ft. 아이유(IU)", "videoId": "Vl1kO9hObpA"},
+    {"id": "akmu-tictoc-tictoc-tictoc", "title": "째깍 째깍 째깍 (with Beenzino)", "artist": "AKMU(악동뮤지션)", "videoId": "VkMs8P1YYNs"},
+
 ]
-SONGS = []
-for i in range(3):
-    for song in BASE_SONGS:
-        s = song.copy()
-        s["id"] = f"{song['id']}_{i}"
-        SONGS.append(s)
 
 HEADLINES = ["진짜 사랑해", "고마워", "옆에 있어줘", "덕분에 행복해", "안아줄게", "맛있는 거 먹자", "바다보러 갈래?"]
 
@@ -50,9 +58,7 @@ if st.session_state.get("scroll_to_top"):
     st.session_state.scroll_to_top = False
 
 # -----------------------------
-# CSS (확실히 먹는 방식으로 재구성)
-# - 노래 목록: st.button (핑크/보라)
-# - 페이지네이션: st.radio horizontal (파랑/하늘) + 원형
+# CSS 
 # -----------------------------
 st.markdown(
     """
@@ -83,14 +89,14 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   --card: #fff5fb;
   --border: #ffd0e8;
 
-  /* ✅ 기본 텍스트(검정X): 플럼/퍼플 계열 */
+  /* 기본 텍스트(검정X): 플럼/퍼플 계열 */
   --text: #5a2b5f;
   --muted: #a65b93;
 
-  /* ✅ 글귀(HEADLINE) 전용: 더 쨍한 핑크 */
+  /* 글귀(HEADLINE) 전용: 더 쨍한 핑크 */
   --headline: #ff2d8b;
 
-  /* ✅ 제목(곡명) 전용: 또 다른 톤 */
+  /* 제목(곡명) 전용: 또 다른 톤 */
   --title: #7a1b6a;
 
   --shadow: 0 12px 34px rgba(0,0,0,0.12);
@@ -151,7 +157,7 @@ h1, h2, h3, h4, h5, h6,
   letter-spacing: -0.6px;
   margin: 0.15rem 0 1.0rem 0 !important;
   text-align: center !important;
-  color: var(--headline) !important;   /* ✅ 글귀만 다른 색 */
+  color: var(--headline) !important;
 }
 
 /* 유튜브 */
@@ -165,7 +171,7 @@ h1, h2, h3, h4, h5, h6,
 }
 .yt-wrap iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
 
-/* 플레이어 아래 제목/가수 (바짝 붙이기) */
+/* 플레이어 아래 제목/가수 */
 div[data-testid="stIFrame"]{
   margin-bottom: -18px !important;
   padding-bottom: 0 !important;
@@ -180,7 +186,7 @@ div[data-testid="stIFrame"]{
   font-weight: 850;
   margin:0 !important;
   line-height: 1.08 !important;
-  color: var(--title) !important;      /* ✅ 제목도 글귀와 다른 색 */
+  color: var(--title) !important;
 }
 .song-artist{
   font-size: clamp(1.05rem, 3.2vw, 1.25rem) !important;
@@ -222,19 +228,17 @@ div[data-testid="stButton"] > button[kind="primary"] * {
 }
 
 /* =========================================================
-   ✅ 페이지네이션 숫자 버튼 하단 여백 생성 
+   ✅ 페이지네이션 및 숫자 버튼
    ========================================================= */
 div[data-testid="stRadio"] {
   margin-top: 4px !important;
-  margin-bottom: 60px !important; /* ✅ 요청하신 하단 넉넉한 여백 복구! */
+  margin-bottom: 60px !important; /* 하단 넉넉한 여백 */
 }
 
-/* ✅ (중요) st.radio의 "위젯 라벨" 숨김 → 빈 동그라미 원천 차단 */
 div[data-testid="stRadio"] > label {
   display: none !important;
 }
 
-/* 라디오 그룹: 가운데 + 좌우 여백 */
 div[data-testid="stRadio"] [role="radiogroup"] {
   display: flex !important;
   flex-direction: row !important;
@@ -249,9 +253,6 @@ div[data-testid="stRadio"] [role="radiogroup"] {
   box-sizing: border-box !important;
 }
 
-/* =========================================================
-   ✅ 숫자 버튼: 숫자가 원 정중앙에 완벽하게 오도록 수정!
-   ========================================================= */
 div[data-testid="stRadio"] [role="radiogroup"] label {
   width: 48px !important;
   height: 48px !important;
@@ -264,12 +265,10 @@ div[data-testid="stRadio"] [role="radiogroup"] label {
   border: none !important;
 }
 
-/* 기본 라디오 동그라미(첫 블록) 숨김 */
 div[data-testid="stRadio"] [role="radiogroup"] label > div:first-of-type {
   display: none !important;
 }
 
-/* 클릭 영역 */
 div[data-testid="stRadio"] [role="radiogroup"] input[type="radio"] {
   position: absolute !important;
   inset: 0 !important;
@@ -281,7 +280,6 @@ div[data-testid="stRadio"] [role="radiogroup"] input[type="radio"] {
   cursor: pointer !important;
 }
 
-/* 원(도형) 자체 */
 div[data-testid="stRadio"] [role="radiogroup"] label > div:last-child {
   position: absolute !important;
   inset: 0 !important;
@@ -297,7 +295,6 @@ div[data-testid="stRadio"] [role="radiogroup"] label > div:last-child {
   transition: all 0.18s !important;
 }
 
-/* ✅ 텍스트 래퍼 안쪽 끝까지 100% 강제하여 정중앙(center) 완벽 고정 */
 div[data-testid="stRadio"] [role="radiogroup"] label > div:last-child > div,
 div[data-testid="stRadio"] [role="radiogroup"] label [data-testid="stMarkdownContainer"] {
   width: 100% !important;
@@ -309,7 +306,6 @@ div[data-testid="stRadio"] [role="radiogroup"] label [data-testid="stMarkdownCon
   padding: 0 !important;
 }
 
-/* ✅ 숫자 텍스트 자체에도 flex를 걸어서 어떤 기기에서도 한가운데 고정되게 처리 */
 div[data-testid="stRadio"] [role="radiogroup"] label p {
   display: flex !important;
   align-items: center !important;
@@ -325,7 +321,6 @@ div[data-testid="stRadio"] [role="radiogroup"] label p {
   color: var(--title) !important;
 }
 
-/* 선택 상태 */
 div[data-testid="stRadio"] [role="radiogroup"] input[type="radio"]:checked ~ div:last-child {
   background: var(--page-grad) !important;
   border: none !important;
@@ -336,12 +331,11 @@ div[data-testid="stRadio"] [role="radiogroup"] input[type="radio"]:checked ~ div
   -webkit-text-fill-color: #ffffff !important;
 }
 
-/* 모바일 */
 @media (max-width: 520px) {
   .block-container{ padding-left: 0.8rem !important; padding-right: 0.8rem !important; }
   div[data-testid="stIFrame"]{ margin-bottom: -20px !important; }
   .song-info{ margin-top: -0.85rem !important; margin-bottom: 0.95rem !important; padding-left: 8px !important; }
-  div[data-testid="stRadio"] { margin-bottom: 50px !important; } /* ✅ 모바일 하단 여백 유지 */
+  div[data-testid="stRadio"] { margin-bottom: 50px !important; }
 }
 </style>
 """,
