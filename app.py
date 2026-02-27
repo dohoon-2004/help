@@ -27,7 +27,6 @@ for i in range(3):
 
 HEADLINES = ["진짜 사랑해", "고마워", "옆에 있어줘", "덕분에 행복해", "안아줄게", "맛있는 거 먹자", "바다보러 갈래?"]
 
-
 def yt_embed(video_id: str, title: str):
     src = f"https://www.youtube-nocookie.com/embed/{video_id}?rel=0&controls=1"
     html = f"""
@@ -40,8 +39,8 @@ def yt_embed(video_id: str, title: str):
       ></iframe>
     </div>
     """
-    components.html(html, height=170)
-
+    # 모바일 공백 최소화
+    components.html(html, height=190)
 
 st.set_page_config(page_title="player", page_icon="🎧", layout="wide")
 
@@ -51,7 +50,9 @@ if st.session_state.get("scroll_to_top"):
     st.session_state.scroll_to_top = False
 
 # -----------------------------
-# CSS
+# CSS (확실히 먹는 방식으로 재구성)
+# - 노래 목록: st.button (핑크/보라)
+# - 페이지네이션: st.radio horizontal (파랑/하늘) + 원형
 # -----------------------------
 st.markdown(
     """
@@ -221,14 +222,14 @@ div[data-testid="stButton"] > button[kind="primary"] * {
 }
 
 /* =========================================================
-   ✅ 페이지네이션 "띄움" 최소화
+   ✅ 페이지네이션 숫자 버튼 하단 여백 생성 
    ========================================================= */
 div[data-testid="stRadio"] {
   margin-top: 4px !important;
-  margin-bottom: 8px !important;
+  margin-bottom: 60px !important; /* ✅ 요청하신 하단 넉넉한 여백 복구! */
 }
 
-/* ✅ (중요) st.radio의 "위젯 라벨" 숨김 → 아까 같은 빈 동그라미 원천 차단 */
+/* ✅ (중요) st.radio의 "위젯 라벨" 숨김 → 빈 동그라미 원천 차단 */
 div[data-testid="stRadio"] > label {
   display: none !important;
 }
@@ -249,8 +250,7 @@ div[data-testid="stRadio"] [role="radiogroup"] {
 }
 
 /* =========================================================
-   ✅ 숫자 버튼: 숫자가 원 정중앙 (안정적으로)
-   - selector를 radiogroup 안의 label로만 제한 (이상한 거 안 뜸)
+   ✅ 숫자 버튼: 숫자가 원 정중앙에 완벽하게 오도록 수정!
    ========================================================= */
 div[data-testid="stRadio"] [role="radiogroup"] label {
   width: 48px !important;
@@ -297,7 +297,7 @@ div[data-testid="stRadio"] [role="radiogroup"] label > div:last-child {
   transition: all 0.18s !important;
 }
 
-/* 텍스트 래퍼까지 100% + 중앙정렬 강제 */
+/* ✅ 텍스트 래퍼 안쪽 끝까지 100% 강제하여 정중앙(center) 완벽 고정 */
 div[data-testid="stRadio"] [role="radiogroup"] label > div:last-child > div,
 div[data-testid="stRadio"] [role="radiogroup"] label [data-testid="stMarkdownContainer"] {
   width: 100% !important;
@@ -309,8 +309,13 @@ div[data-testid="stRadio"] [role="radiogroup"] label [data-testid="stMarkdownCon
   padding: 0 !important;
 }
 
-/* 숫자 텍스트 */
+/* ✅ 숫자 텍스트 자체에도 flex를 걸어서 어떤 기기에서도 한가운데 고정되게 처리 */
 div[data-testid="stRadio"] [role="radiogroup"] label p {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
   margin: 0 !important;
   padding: 0 !important;
   line-height: 1 !important;
@@ -336,7 +341,7 @@ div[data-testid="stRadio"] [role="radiogroup"] input[type="radio"]:checked ~ div
   .block-container{ padding-left: 0.8rem !important; padding-right: 0.8rem !important; }
   div[data-testid="stIFrame"]{ margin-bottom: -20px !important; }
   .song-info{ margin-top: -0.85rem !important; margin-bottom: 0.95rem !important; padding-left: 8px !important; }
-  div[data-testid="stRadio"] { margin-bottom: 6px !important; }
+  div[data-testid="stRadio"] { margin-bottom: 50px !important; } /* ✅ 모바일 하단 여백 유지 */
 }
 </style>
 """,
